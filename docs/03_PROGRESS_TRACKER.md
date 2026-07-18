@@ -2,7 +2,7 @@
 
 Overall Progress
 
-████░░░░░░░░░░░░░░░░ 5%
+████░░░░░░░░░░░░░░░░ 10%
 
 Architecture      ██████████ 100%
 Planning          ██████████ 100%
@@ -14,3 +14,6 @@ Vision            ░░░░░░░░░░ 0%
 Memory            ░░░░░░░░░░ 0%
 Plugins           ░░░░░░░░░░ 0%
 Automation        ░░░░░░░░░░ 0%
+foundation-10%
+Desktop Foundation
+████░░░░░░ 40%
