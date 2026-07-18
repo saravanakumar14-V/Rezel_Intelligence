@@ -17,3 +17,8 @@ Automation        ░░░░░░░░░░ 0%
 foundation-10%
 Desktop Foundation
 ████░░░░░░ 40%
+Desktop UI
+
+██░░░░░░░░
+
+20%

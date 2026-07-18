@@ -16,3 +16,14 @@ Production monorepo approved.
 
 Status:
 Approved
+
+## DL-091
+
+### Title
+Adopt pnpm Workspace
+
+### Status
+Approved
+
+### Reason
+Rezel will use a monorepo with shared packages to improve scalability and code reuse.

@@ -21,3 +21,13 @@ Added
 - React desktop application
 - Tauri desktop runtime
 - First executable Rezel window
+- ### Added
+- React + TypeScript + Vite application initialized in apps/desktop.
+- ## v0.0.2-dev
+
+### Added
+- React + TypeScript + Vite application initialized.
+- Tauri desktop runtime initialized.
+- Added
+
+Genesis Boot System
