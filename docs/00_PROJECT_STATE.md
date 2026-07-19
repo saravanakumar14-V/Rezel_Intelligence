@@ -4,22 +4,41 @@
 Rezel
 
 ## Version
-v0.0.1-dev
+v0.1.0-dev
 
 ## Current Phase
-Phase 1 - Foundation
+Phase 1 – Foundation & Core UI
 
 ## Current Sprint
-Sprint 1 - Day 1
+Sprint 2
 
 ## Current Branch
-main (to be created)
+main
 
 ## Current Feature
-Repository Initialization
+Feature 2 – Cinematic Space Scene ✓ COMPLETE
 
 ## Current Task
-Create project structure and initialize development environment.
+Stage 2 – Tauri Secure Storage & System Telemetry Backend
+
+## Completed Tasks
+- Project planned and architecture finalized
+- Git initialized and GitHub connected
+- Monorepo structure created (pnpm workspaces)
+- React + TypeScript + Vite initialized
+- Tauri desktop runtime integrated
+- Tailwind CSS v4 configured
+- Genesis Boot Screen implemented (Feature 1)
+- Cinematic Space Scene completed (Feature 2 / Stage 1):
+  - CameraController, StarsField, EnergyRing, OrbitParticles, CoreLight, QuantumCore, SpaceScene
+  - TypeScript clean (0 errors), Vite build: 827ms
+
+## Next Task
+Stage 2 — Rust backend: sysinfo telemetry, OS keyring API key storage, Tauri command registration.
+
+## Blockers
+None
+
 
 ## Completed Tasks
 - Project planned
