@@ -1,7 +1,7 @@
-import SpaceScene from "./components/scene/SpaceScene";
+import { BootScreen } from "./components/boot";
 
 function App() {
-  return <SpaceScene />;
+  return <BootScreen />;
 }
 
 export default App;
