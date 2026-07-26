@@ -1,18 +1,17 @@
 import SpaceScene from "../scene/SpaceScene";
+import HologramHUD from "../hud/HologramHUD";
 
 /**
  * HomeScreen
  *
  * The primary view rendered after the Genesis boot sequence completes.
  *
- * Currently mounts the full Cinematic Space Scene (Feature 2).
- * Future stages will overlay the HologramHUD and CommandOrb on top
- * of the 3D canvas using absolute-positioned React elements.
+ * Layout (stacking order):
+ *  1. SpaceScene      — position:absolute inset-0, z-index 0 (R3F canvas)
+ *  2. HologramHUD     — position:absolute inset-0, z-index 10 (glassmorphic overlay)
  *
- * Layout:
- *  - Outer container fills 100vw × 100vh, overflow hidden
- *  - SpaceScene is position:absolute inset-0 (fills the container)
- *  - HUD layers will sit above via z-index stacking (Stage 3)
+ * HologramHUD uses pointer-events-none so mouse events fall through to
+ * the canvas for the CameraController parallax effect.
  */
 export default function HomeScreen() {
   return (
@@ -22,6 +21,9 @@ export default function HomeScreen() {
     >
       {/* Cinematic 3D space scene — fills the entire background */}
       <SpaceScene />
+
+      {/* Glassmorphic HUD overlay — telemetry, clock, voice state */}
+      <HologramHUD />
     </div>
   );
 }

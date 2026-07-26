@@ -1,0 +1,18 @@
+/**
+ * Rezel — HUD animations
+ *
+ * rezel-orb-pulse  : radial breathing for CommandOrb rings.
+ *                    Applied at multiple staggered delays per ring.
+ * rezel-scan-sweep : (reserved — Stage 6)
+ */
+
+@keyframes rezel-orb-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.4;
+  }
+}
