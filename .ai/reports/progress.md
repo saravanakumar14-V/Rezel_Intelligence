@@ -61,14 +61,28 @@ Rezel – Desktop AI Operating Intelligence
 
 ### Stage 5 – Local Memory & Modular AI Services
 
-Planned:
-- GeminiProvider.ts (Gemini API integration)
-- ToolRegistry.ts (tool registration and lookup)
-- AI ToolExecutor.ts (AI-layer bridge to security ToolExecutor)
-- Planner.ts (multi-step task planning)
-- AgentCore.ts (central AI orchestration)
-- LocalMemory.ts (SQLite-compatible memory store)
-- Tauri read_app_file/write_app_file commands
+#### ✅ Completed
+
+##### AI Layer (`src/lib/ai/`)
+- types.ts – shared type definitions (Message, Provider, Tool, Memory, Planner)
+- GeminiProvider.ts – streaming SSE client, retry with backoff, API key from OS keyring
+- ToolRegistry.ts – dynamic registration, category filtering, Gemini function-declaration export
+- ToolExecutor.ts (AI) – bridge to Stage 4 security pipeline, sequential tool call execution
+- Planner.ts – multi-step task executor with dependency resolution and failure propagation
+- AgentCore.ts – central orchestrator: provider → streaming → tool calls → memory persistence
+
+##### Memory Layer (`src/lib/memory/`)
+- LocalMemory.ts – JSON-file-backed store: conversations, key-value entries, text search, pruning
+
+##### Rust Backend (`src-tauri/src/commands/`)
+- files.rs – read_app_file / write_app_file sandboxed to `{app_data_dir}/rezel_data/`
+- Path validation: rejects absolute paths, traversal, and escape attempts
+- Atomic writes via temp-file-then-rename pattern
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: 476 modules, 2.02s
+- Cargo check: passed (6.02s)
 
 ---
 
