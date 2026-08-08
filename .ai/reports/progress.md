@@ -86,13 +86,46 @@ Rezel – Desktop AI Operating Intelligence
 
 ---
 
-## Remaining
+### Stage 6 – Voice Engine & Final Polish
 
-Stage 6
-- Voice Engine (Web Speech API)
-- Final Polish
-- Documentation
-- Release
+#### ✅ Completed
+
+##### Voice Engine (`src/hooks/`)
+- useVoice.ts – STT via SpeechRecognition (webkit-prefixed), TTS via SpeechSynthesis
+- Start, stop, cancel, speaking state with proper lifecycle management
+- Interim transcript support for real-time display
+- Automatic cleanup on unmount (abort recognition, cancel synthesis)
+- Non-fatal error handling (no-speech, aborted, interrupted)
+
+##### Integration
+- HomeScreen.tsx – Voice result → AgentCore.send() → TTS response pipeline
+- HologramHUD.tsx – Receives orbState and onOrbClick, passes to CommandOrb
+- CommandOrb.tsx – Interactive: click/keyboard to toggle voice, accessible role="button"
+- Voice states (listening/speaking) take priority over AgentCore states (thinking)
+
+##### Polish
+- BootTransition.tsx – Snappier exit (0.9s), subtle scale on exit, will-change for GPU compositing
+- animations.css – Added rezel-voice-active and rezel-fade-in keyframes
+- CommandOrb.tsx – Updated stale Stage 6 comment, pointer-events-auto when clickable
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: 483 modules, 1.57s
+- Cargo check: passed (1.69s)
+
+---
+
+## ✅ All Stages Complete
+
+| Stage | Status |
+|-------|--------|
+| Stage 1 – Space Scene | ✅ Complete |
+| Stage 1.5 – Boot Redesign | ✅ Complete |
+| Stage 2 – Tauri Backend | ✅ Complete |
+| Stage 3 – Hologram HUD | ✅ Complete |
+| Stage 4 – Security Pipeline | ✅ Complete |
+| Stage 5 – AI & Memory | ✅ Complete |
+| Stage 6 – Voice & Polish | ✅ Complete |
 
 ---
 
@@ -109,4 +142,4 @@ Cloud AI:
 ---
 
 Last Updated:
-6 August 2026
+9 August 2026

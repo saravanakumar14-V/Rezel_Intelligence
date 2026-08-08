@@ -5,6 +5,7 @@ export type OrbState = "idle" | "listening" | "thinking" | "speaking";
 
 interface CommandOrbProps {
   state?: OrbState;
+  onClick?: () => void;
   className?: string;
 }
 
@@ -57,9 +58,9 @@ const STATE_CONFIG: Record<
  * orb always appears to be "breathing". The inner core colour changes per state.
  *
  * All animation is pure CSS keyframes (no JS RAF overhead).
- * Stage 6 will wire `state` to the useVoice hook.
+ * Voice state is wired from useVoice → HomeScreen → HologramHUD → CommandOrb.
  */
-export default function CommandOrb({ state = "idle", className }: CommandOrbProps) {
+export default function CommandOrb({ state = "idle", onClick, className }: CommandOrbProps) {
   const cfg = STATE_CONFIG[state];
 
   // Unique animation duration per state derived from BPM
@@ -69,7 +70,18 @@ export default function CommandOrb({ state = "idle", className }: CommandOrbProp
   );
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
+    <div
+      className={cn("flex flex-col items-center gap-2", className)}
+      onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.(); }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Voice control: ${cfg.label}`}
+      style={{
+        cursor: onClick ? 'pointer' : 'default',
+        pointerEvents: onClick ? 'auto' : 'none',
+      }}
+    >
       {/* Rings stack — 3 concentric pulse rings */}
       <div className="relative flex items-center justify-center" style={{ width: 88, height: 88 }}>
         {/* Outer pulse ring */}

@@ -3,7 +3,8 @@
  *
  * rezel-orb-pulse  : radial breathing for CommandOrb rings.
  *                    Applied at multiple staggered delays per ring.
- * rezel-scan-sweep : (reserved — Stage 6)
+ * rezel-voice-active : faster glow pulse when voice is listening/speaking.
+ * rezel-fade-in     : generic fade-in for HUD elements.
  */
 
 @keyframes rezel-orb-pulse {
@@ -14,5 +15,27 @@
   50% {
     transform: scale(1.08);
     opacity: 0.4;
+  }
+}
+
+@keyframes rezel-voice-active {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.12);
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes rezel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

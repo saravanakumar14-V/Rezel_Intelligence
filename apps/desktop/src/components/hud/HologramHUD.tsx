@@ -21,6 +21,7 @@ const HUD_MOUNT_DELAY_MS = 600;
 
 interface HologramHUDProps {
   orbState?: OrbState;
+  onOrbClick?: () => void;
 }
 
 /**
@@ -49,7 +50,7 @@ interface HologramHUDProps {
  *  - Mount fade uses CSS opacity transition (no JS animation library needed)
  *  - pointer-events-none on the wrapper prevents canvas mouse capture loss
  */
-export default function HologramHUD({ orbState = "idle" }: HologramHUDProps) {
+export default function HologramHUD({ orbState = "idle", onOrbClick }: HologramHUDProps) {
   const metrics = useSystemMetrics();
   const [visible, setVisible] = useState(false);
   const [timeStr, setTimeStr] = useState("");
@@ -151,7 +152,7 @@ export default function HologramHUD({ orbState = "idle" }: HologramHUDProps) {
 
       {/* ── Bottom-centre — CommandOrb ─────────────────────── */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center">
-        <CommandOrb state={orbState} />
+        <CommandOrb state={orbState} onClick={onOrbClick} />
       </div>
 
       {/* Bottom hairline border */}
