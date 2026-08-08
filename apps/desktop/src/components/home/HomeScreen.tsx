@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import SpaceScene from '../scene/SpaceScene';
 import HologramHUD from '../hud/HologramHUD';
+import PanelHost from '../layout/PanelHost';
 import PermissionConfirmModal from '../hud/PermissionConfirmModal';
 import {
   setApprovalHandler,
@@ -11,6 +12,7 @@ import { AgentCore } from '../../lib/ai/AgentCore';
 import type { AgentStatus } from '../../lib/ai/AgentCore';
 import { useVoice } from '../../hooks/useVoice';
 import type { OrbState } from '../hud/CommandOrb';
+import type { AppMode } from '../hud/ModeNav';
 
 /**
  * HomeScreen
@@ -20,6 +22,7 @@ import type { OrbState } from '../hud/CommandOrb';
  * Stacking order (back → front):
  *  z-auto  — SpaceScene                (R3F Canvas, fills background)
  *  z-10    — HologramHUD               (glassmorphic overlay, pointer-events-none)
+ *  z-20    — PanelHost                  (active panel, right-aligned)
  *  z-50    — PermissionConfirmModal     (only when a tool needs approval)
  *
  * Integrations:
@@ -43,6 +46,9 @@ function agentStatusToOrbState(status: AgentStatus): OrbState {
 }
 
 export default function HomeScreen() {
+  // ── App mode ────────────────────────────────────────────────────────────
+  const [mode, setMode] = useState<AppMode>('core');
+
   // ── Security approval state ──────────────────────────────────────────────
   const [pendingApproval, setPendingApproval] = useState<ApprovalRequest | null>(null);
 
@@ -147,8 +153,16 @@ export default function HomeScreen() {
       {/* Cinematic 3D space scene — fills the entire background */}
       <SpaceScene />
 
-      {/* Glassmorphic HUD overlay — telemetry, clock, voice state */}
-      <HologramHUD orbState={effectiveOrbState} onOrbClick={handleOrbClick} />
+      {/* Glassmorphic HUD overlay — telemetry, clock, mode nav, voice state */}
+      <HologramHUD
+        orbState={effectiveOrbState}
+        onOrbClick={handleOrbClick}
+        mode={mode}
+        onModeChange={setMode}
+      />
+
+      {/* Active panel — right-aligned glassmorphic overlay */}
+      <PanelHost mode={mode} />
 
       {/* Permission confirmation modal — only visible when ToolExecutor awaits approval */}
       {pendingApproval && (

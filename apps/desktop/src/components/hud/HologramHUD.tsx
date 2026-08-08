@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useSystemMetrics } from "../../hooks/useSystemMetrics";
 import StatusPanel from "./StatusPanel";
 import CommandOrb from "./CommandOrb";
+import ModeNav from "./ModeNav";
 import type { OrbState } from "./CommandOrb";
+import type { AppMode } from "./ModeNav";
 
 /**
  * REZEL_VERSION
@@ -22,6 +24,8 @@ const HUD_MOUNT_DELAY_MS = 600;
 interface HologramHUDProps {
   orbState?: OrbState;
   onOrbClick?: () => void;
+  mode?: AppMode;
+  onModeChange?: (mode: AppMode) => void;
 }
 
 /**
@@ -50,7 +54,7 @@ interface HologramHUDProps {
  *  - Mount fade uses CSS opacity transition (no JS animation library needed)
  *  - pointer-events-none on the wrapper prevents canvas mouse capture loss
  */
-export default function HologramHUD({ orbState = "idle", onOrbClick }: HologramHUDProps) {
+export default function HologramHUD({ orbState = "idle", onOrbClick, mode = "core", onModeChange }: HologramHUDProps) {
   const metrics = useSystemMetrics();
   const [visible, setVisible] = useState(false);
   const [timeStr, setTimeStr] = useState("");
@@ -117,11 +121,11 @@ export default function HologramHUD({ orbState = "idle", onOrbClick }: HologramH
           </span>
         </div>
 
-        {/* Centre — decorative separator dots */}
-        <div className="flex-1 flex justify-center items-center gap-1 opacity-20">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div key={i} className="w-px h-px rounded-full bg-[#00E5FF]" />
-          ))}
+        {/* Centre — mode navigation */}
+        <div className="flex-1 flex justify-center items-center">
+          {onModeChange && (
+            <ModeNav mode={mode} onModeChange={onModeChange} />
+          )}
         </div>
 
         {/* Right — timestamp */}
