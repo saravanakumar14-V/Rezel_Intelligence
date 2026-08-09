@@ -11,6 +11,7 @@ import {
 import { AgentCore } from '../../lib/ai/AgentCore';
 import type { AgentStatus } from '../../lib/ai/AgentCore';
 import { useVoice } from '../../hooks/useVoice';
+import { useChat } from '../../hooks/useChat';
 import type { OrbState } from '../hud/CommandOrb';
 import type { AppMode } from '../hud/ModeNav';
 
@@ -25,10 +26,11 @@ import type { AppMode } from '../hud/ModeNav';
  *  z-20    — PanelHost                  (active panel, right-aligned)
  *  z-50    — PermissionConfirmModal     (only when a tool needs approval)
  *
- * Integrations:
- *  Security — ToolExecutor approval handler
- *  Voice   — useVoice hook → AgentCore.send() → TTS response
- *  AI      — AgentCore event handler drives orbState
+ * Event architecture:
+ *  HomeScreen owns the single AgentCore.setEventHandler() call.
+ *  Events are forwarded to both:
+ *   - orbState (for CommandOrb visual state)
+ *   - useChat.handleAgentEvent (for streaming text in ChatPanel)
  */
 
 /** Maps AgentCore status to CommandOrb visual state. */
@@ -69,7 +71,12 @@ export default function HomeScreen() {
     setPendingApproval(null);
   }, [pendingApproval]);
 
-  // ── AgentCore init + event handling ──────────────────────────────────────
+  // ── Chat hook ───────────────────────────────────────────────────────────
+  const chat = useChat();
+  const chatEventRef = useRef(chat.handleAgentEvent);
+  chatEventRef.current = chat.handleAgentEvent;
+
+  // ── AgentCore init + unified event handling ─────────────────────────────
   const [orbState, setOrbState] = useState<OrbState>('idle');
   const processingRef = useRef(false);
 
@@ -77,8 +84,11 @@ export default function HomeScreen() {
     AgentCore.init().catch(console.error);
 
     AgentCore.setEventHandler((event) => {
+      // Forward to chat hook (streaming text, messages, etc.)
+      chatEventRef.current(event);
+
+      // Update orb state
       if (event.type === 'status_change' && event.status) {
-        // Don't override voice states (listening/speaking)
         if (event.status === 'idle' && !processingRef.current) {
           setOrbState('idle');
         } else if (event.status !== 'idle') {
@@ -127,7 +137,6 @@ export default function HomeScreen() {
     onError: handleVoiceError,
   });
 
-  // Keep ref in sync after destructuring
   speakRef.current = speak;
 
   // Voice states (listening/speaking) take priority over agent states
@@ -162,7 +171,7 @@ export default function HomeScreen() {
       />
 
       {/* Active panel — right-aligned glassmorphic overlay */}
-      <PanelHost mode={mode} />
+      <PanelHost mode={mode} chat={chat} />
 
       {/* Permission confirmation modal — only visible when ToolExecutor awaits approval */}
       {pendingApproval && (

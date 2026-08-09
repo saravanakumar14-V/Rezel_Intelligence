@@ -1,8 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { AppMode } from '../hud/ModeNav';
+import type { UseChatReturn } from '../../hooks/useChat';
 
-// ─── Lazy-loaded panel stubs ──────────────────────────────────────────────────
+// ─── Lazy-loaded panels ───────────────────────────────────────────────────────
 
 const ChatPanel       = lazy(() => import('../panels/ChatPanel'));
 const AutoPanel       = lazy(() => import('../panels/AutoPanel'));
@@ -26,6 +27,8 @@ const panelTransition = {
 
 interface PanelHostProps {
   mode: AppMode;
+  /** Chat hook state — passed through to ChatPanel to avoid re-creating useChat. */
+  chat?: UseChatReturn;
 }
 
 /**
@@ -39,7 +42,7 @@ interface PanelHostProps {
  *
  * The SpaceScene is a sibling, never remounts during mode changes.
  */
-export default function PanelHost({ mode }: PanelHostProps) {
+export default function PanelHost({ mode, chat }: PanelHostProps) {
   return (
     <div
       className="absolute inset-0 pointer-events-none"
@@ -57,7 +60,7 @@ export default function PanelHost({ mode }: PanelHostProps) {
             className="absolute inset-0 pointer-events-none"
           >
             <Suspense fallback={null}>
-              {mode === 'chat'     && <ChatPanel />}
+              {mode === 'chat'     && chat && <ChatPanel chat={chat} />}
               {mode === 'auto'     && <AutoPanel />}
               {mode === 'memory'   && <MemoryPanel />}
               {mode === 'settings' && <SettingsPanel />}

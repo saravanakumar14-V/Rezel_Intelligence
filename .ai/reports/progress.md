@@ -129,6 +129,61 @@ Rezel – Desktop AI Operating Intelligence
 
 ---
 
+## Phase 7 — Rezel OS Experience & Interface
+
+### Milestone 7.1 – Navigation Architecture ✅
+
+- AppMode type: core | chat | auto | memory | settings
+- ModeNav: 5-tab HUD navigation with lucide icons
+- PanelHost: AnimatePresence container with slide+blur transitions
+- PanelShell: shared glassmorphic panel container
+- Panel stubs: ChatPanel, AutoPanel, MemoryPanel, SettingsPanel (lazy-loaded)
+- Commit: `4b92628`
+
+### Milestone 7.2 – Chat Interface ✅
+
+##### useChat hook (`src/hooks/`)
+- useChat.ts — wraps AgentCore for chat: messages, streaming, send, abort, conversation management
+- Event forwarding pattern: HomeScreen owns setEventHandler, forwards to useChat.handleAgentEvent
+- No duplicate AI client — all AI goes through AgentCore singleton
+
+##### Chat components (`src/components/panels/chat/`)
+- MessageBubble.tsx — user (right, cyan), assistant (left, dark), tool (compact, purple) messages
+- MessageList.tsx — scrollable container, auto-scroll, streaming display, thinking indicator, empty state
+- ChatInput.tsx — auto-expanding textarea, Enter-to-send, Shift+Enter newline, send/abort toggle
+
+##### ChatPanel (`src/components/panels/`)
+- ChatPanel.tsx — full chat panel: MessageList + ChatInput + new conversation button + error display
+- Receives useChat return as props from PanelHost (avoids event handler conflict)
+
+##### Integration
+- HomeScreen.tsx — unified event handler forwards to both orbState and useChat
+- PanelHost.tsx — accepts and passes chat prop to ChatPanel
+- Voice input continues through existing HomeScreen → useVoice → AgentCore path
+- Both voice and text share the same conversation via AgentCore singleton
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: code-split, ChatPanel 8.20 kB, built in 2.92s
+- SpaceScene: continuously mounted, never remounts
+- PermissionConfirmModal: z-50 above panels at z-20
+
+---
+
+## Remaining Phase 7 Milestones
+
+| Milestone | Status |
+|-----------|--------|
+| 7.1 Navigation Architecture | ✅ Complete |
+| 7.2 Chat Interface | ✅ Complete |
+| 7.3 Automation Interface | ⬜ Pending |
+| 7.4 Memory Interface | ⬜ Pending |
+| 7.5 Settings Interface | ⬜ Pending |
+| 7.6 Transitions & Polish | ⬜ Pending |
+| 7.7 Final Integration | ⬜ Pending |
+
+---
+
 ## Local AI
 
 Installed:
