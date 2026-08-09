@@ -168,6 +168,34 @@ Rezel – Desktop AI Operating Intelligence
 - SpaceScene: continuously mounted, never remounts
 - PermissionConfirmModal: z-50 above panels at z-20
 
+### Milestone 7.3 – Automation Interface ✅
+
+##### AutoPanel (`src/components/panels/`)
+- AutoPanel.tsx — full automation console: tool browser, task input, plan execution, audit log
+- Task execution via AgentCore.send() → full security pipeline (never bypasses)
+- Planner event integration: step_start, step_complete, step_failed, step_skipped
+- Cancel support via AgentCore.abort()
+
+##### Sub-components (`src/components/panels/auto/`)
+- ToolCard.tsx — compact tool display: icon, name, description, risk badge, category, params
+- AuditLog.tsx — reads AuditLogger.getRecent(), shows timestamp, action, risk, outcome, duration
+
+##### Three logical sections
+1. Task input + plan step progress (always visible when active)
+2. Capabilities — collapsible tool registry browser (ToolRegistry.getAll())
+3. Recent Operations — collapsible audit log (AuditLogger.getRecent())
+
+##### Security compliance
+- All execution goes through: AgentCore → Planner → AIToolExecutor → SecurityToolExecutor
+- PermissionConfirmModal remains at z-50, above automation panel at z-20
+- No shell commands executed directly from React
+- No second permission system, audit system, or tool registry created
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: code-split, AutoPanel 13.59 kB, built in 2.17s
+- No Rust changes required
+
 ---
 
 ## Remaining Phase 7 Milestones
@@ -176,7 +204,7 @@ Rezel – Desktop AI Operating Intelligence
 |-----------|--------|
 | 7.1 Navigation Architecture | ✅ Complete |
 | 7.2 Chat Interface | ✅ Complete |
-| 7.3 Automation Interface | ⬜ Pending |
+| 7.3 Automation Interface | ✅ Complete |
 | 7.4 Memory Interface | ⬜ Pending |
 | 7.5 Settings Interface | ⬜ Pending |
 | 7.6 Transitions & Polish | ⬜ Pending |
