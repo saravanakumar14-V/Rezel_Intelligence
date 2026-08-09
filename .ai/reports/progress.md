@@ -220,6 +220,39 @@ Rezel – Desktop AI Operating Intelligence
 - Vite build: code-split, MemoryPanel 9.50 kB, MessageBubble shared chunk 1.96 kB, built in 3.27s
 - No Rust changes required
 
+### Milestone 7.5 – Settings Interface ✅
+
+##### SettingsPanel (`src/components/panels/`)
+- SettingsPanel.tsx — orchestrator with lazy-loaded sections, Suspense fallbacks, dividers
+- Reuses PanelShell with title "System" / subtitle "Configuration"
+
+##### Settings sections (`src/components/panels/settings/`)
+- ApiKeySection.tsx — API key management via Tauri keyring (save_api_key, get_api_key, delete_api_key)
+- VoiceSection.tsx — STT/TTS capability detection, available voices, default voice, active language
+- SystemSection.tsx — live CPU/RAM metrics via useSystemMetrics, inline progress bars
+- PermissionsSection.tsx — session grants list via PermissionManager.getGrantedKeys(), audit summary via AuditLogger.getRecent()
+- AboutSection.tsx — version (v0.1.0-dev), runtime, AI provider, build mode, architecture
+
+##### Backend changes
+- secrets.rs — added delete_api_key Tauri command (keyring credential deletion)
+- lib.rs — registered delete_api_key in invoke_handler
+- PermissionManager.ts — added getGrantedKeys() method for Settings read-only display
+
+##### Security compliance
+- API key never stored in localStorage or React state
+- API key value never logged, displayed, or exposed — only hasKey boolean tracked
+- Masked display (●●●●●●●●●●●●●●) when key is stored
+- All key operations go through Tauri OS keyring (keyring crate)
+- Settings cannot bypass or weaken permissions — read-only security summary
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: code-split, SettingsPanel 2.09 kB, ApiKeySection 5.12 kB, VoiceSection 3.55 kB, SystemSection 2.36 kB, PermissionsSection 3.55 kB, AboutSection 2.10 kB, built in 2.14s
+- Cargo check: passed
+- SpaceScene: continuously mounted, unaffected
+- PermissionConfirmModal: z-50 above panels at z-20
+- Existing Chat, Automation, Memory panels: unchanged
+
 ---
 
 ## Remaining Phase 7 Milestones
@@ -230,7 +263,7 @@ Rezel – Desktop AI Operating Intelligence
 | 7.2 Chat Interface | ✅ Complete |
 | 7.3 Automation Interface | ✅ Complete |
 | 7.4 Memory Interface | ✅ Complete |
-| 7.5 Settings Interface | ⬜ Pending |
+| 7.5 Settings Interface | ✅ Complete |
 | 7.6 Transitions & Polish | ⬜ Pending |
 | 7.7 Final Integration | ⬜ Pending |
 

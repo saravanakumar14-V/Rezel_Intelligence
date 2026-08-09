@@ -14,6 +14,7 @@ pub fn run() {
         commands::system::get_system_info,
         commands::secrets::save_api_key,
         commands::secrets::get_api_key,
+        commands::secrets::delete_api_key,
         commands::shell::run_system_command,
         commands::files::read_app_file,
         commands::files::write_app_file,

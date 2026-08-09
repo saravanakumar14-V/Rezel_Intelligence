@@ -30,3 +30,15 @@ pub fn get_api_key() -> Result<String, String> {
         }
     }
 }
+
+#[tauri::command]
+pub fn delete_api_key() -> Result<(), String> {
+    let entry = Entry::new(SERVICE_NAME, API_KEY_NAME)
+        .map_err(|e| format!("Failed to access keyring: {}", e))?;
+    
+    entry.delete_credential()
+        .map_err(|e| format!("Failed to delete API key: {}", e))?;
+    
+    info!("API key deleted.");
+    Ok(())
+}

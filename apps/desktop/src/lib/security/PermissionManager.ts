@@ -102,6 +102,14 @@ class PermissionManagerImpl {
   revokeAll(): void {
     this.granted.clear();
   }
+
+  /**
+   * getGrantedKeys
+   * Returns all session-granted tool:action keys. Read-only for Settings display.
+   */
+  getGrantedKeys(): readonly string[] {
+    return Array.from(this.granted);
+  }
 }
 
 /** Singleton — import and use directly. */
