@@ -88,7 +88,7 @@ export default function StatusPanel({ metrics, className }: StatusPanelProps) {
     return gb.toFixed(1);
   }, []);
 
-  const ramPct = metrics
+  const ramPct = metrics && metrics.total_memory > 0
     ? (metrics.used_memory / metrics.total_memory) * 100
     : 0;
 

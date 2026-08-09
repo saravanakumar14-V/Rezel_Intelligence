@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import CoreLight from "../core/CoreLight";
@@ -28,8 +28,11 @@ import CameraController from "./CameraController";
  *  - Target 60 FPS on mid-range hardware
  *  - No per-frame object allocations in sub-components
  *  - Geometry instancing used where particle count > 1
+ *
+ * Wrapped in React.memo() — this component receives no props and should
+ * never re-render due to parent state changes (orbState, chat streaming, etc.).
  */
-export default function SpaceScene() {
+const SpaceScene = memo(function SpaceScene() {
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 50, near: 0.1, far: 1000 }}
@@ -72,4 +75,6 @@ export default function SpaceScene() {
       </EffectComposer>
     </Canvas>
   );
-}
+});
+
+export default SpaceScene;
