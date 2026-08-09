@@ -39,18 +39,18 @@ const MODES: readonly ModeEntry[] = [
  * ModeNav
  *
  * Horizontal mode switcher rendered inside the HologramHUD top bar.
- * Five icon+label tabs with an active indicator line.
+ * Five icon+label tabs with an animated active indicator line.
  *
  * Visual language:
  *  - JetBrains Mono, 9px uppercase, wide letter-spacing
  *  - Cyan accent on active tab, dim on inactive
- *  - No background — blends with the HUD glassmorphism
+ *  - Smooth opacity + background transitions between states
  *  - pointer-events-auto on each button (parent HUD is pointer-events-none)
  */
 export default function ModeNav({ mode, onModeChange }: ModeNavProps) {
   return (
     <nav
-      className="flex items-center gap-1"
+      className="flex items-center gap-0.5"
       role="tablist"
       aria-label="Rezel mode navigation"
     >
@@ -92,15 +92,16 @@ function ModeButton({
       className={cn(
         'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg',
         'pointer-events-auto cursor-pointer',
-        'transition-all duration-300 ease-out',
+        'transition-all duration-250 ease-out',
         'outline-none focus-visible:ring-1 focus-visible:ring-[#00E5FF]/50',
         isActive
           ? 'opacity-100'
-          : 'opacity-40 hover:opacity-70',
+          : 'opacity-40 hover:opacity-75',
       )}
       style={{
         background: isActive ? 'rgba(0,229,255,0.08)' : 'transparent',
         border: isActive ? '1px solid rgba(0,229,255,0.20)' : '1px solid transparent',
+        transition: 'all 0.25s cubic-bezier(0.22, 0.68, 0.35, 1)',
       }}
     >
       <Icon
@@ -115,19 +116,23 @@ function ModeButton({
           letterSpacing: '0.16em',
           color: isActive ? '#00E5FF' : '#7ECFFF',
           fontWeight: isActive ? 600 : 400,
+          transition: 'color 0.25s ease, font-weight 0.25s ease',
         }}
       >
         {entry.label}
       </span>
 
-      {/* Active indicator line */}
-      {isActive && (
-        <div
-          className="absolute bottom-0 left-2 right-2 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, #00E5FF, transparent)' }}
-          aria-hidden
-        />
-      )}
+      {/* Active indicator line — animated entrance */}
+      <div
+        className="absolute bottom-0 left-2 right-2 h-px"
+        style={{
+          background: 'linear-gradient(90deg, transparent, #00E5FF, transparent)',
+          opacity: isActive ? 1 : 0,
+          transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
+          transition: 'opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 0.68, 0.35, 1)',
+        }}
+        aria-hidden
+      />
     </button>
   );
 }

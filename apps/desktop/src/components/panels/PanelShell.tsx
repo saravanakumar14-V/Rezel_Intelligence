@@ -33,7 +33,7 @@ export default function PanelShell({
     <div
       className={cn(
         'absolute top-[56px] right-6 bottom-[100px]',
-        'w-[400px] max-w-[calc(100vw-240px)]',
+        'w-[400px] min-w-[280px] max-w-[calc(100vw-220px)]',
         'flex flex-col rounded-2xl overflow-hidden',
         'pointer-events-auto',
         className,

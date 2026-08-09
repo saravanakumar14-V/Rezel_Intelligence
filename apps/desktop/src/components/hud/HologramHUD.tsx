@@ -88,7 +88,8 @@ export default function HologramHUD({ orbState = "idle", onOrbClick, mode = "cor
       className="absolute inset-0 pointer-events-none select-none"
       style={{
         opacity: visible ? 1 : 0,
-        transition: "opacity 1.2s ease",
+        transition: "opacity 1s cubic-bezier(0.22, 0.68, 0.35, 1)",
+        willChange: visible ? 'auto' : 'opacity',
         zIndex: 10,
       }}
       aria-hidden="true"

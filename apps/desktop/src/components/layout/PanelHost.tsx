@@ -13,14 +13,14 @@ const SettingsPanel   = lazy(() => import('../panels/SettingsPanel'));
 // ─── Animation variants ──────────────────────────────────────────────────────
 
 const panelVariants = {
-  initial:  { opacity: 0, x: 40, filter: 'blur(6px)' },
+  initial:  { opacity: 0, x: 32, filter: 'blur(4px)' },
   animate:  { opacity: 1, x: 0,  filter: 'blur(0px)' },
-  exit:     { opacity: 0, x: 20, filter: 'blur(4px)' },
+  exit:     { opacity: 0, x: 16, filter: 'blur(3px)' },
 };
 
 const panelTransition = {
-  duration: 0.35,
-  ease: [0.25, 0.1, 0.25, 1] as const,
+  duration: 0.3,
+  ease: [0.22, 0.68, 0.35, 1.0] as const,
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -58,6 +58,7 @@ export default function PanelHost({ mode, chat }: PanelHostProps) {
             exit="exit"
             transition={panelTransition}
             className="absolute inset-0 pointer-events-none"
+            style={{ willChange: 'opacity, transform, filter' }}
           >
             <Suspense fallback={null}>
               {mode === 'chat'     && chat && <ChatPanel chat={chat} />}

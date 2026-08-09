@@ -29,4 +29,45 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar — thin, translucent, consistent across panels ──────────── */
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.25);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 229, 255, 0.12) transparent;
+}
+
+/* ── Focus ring — accessible but unobtrusive ──────────────────────────── */
+
+:focus-visible {
+  outline: 1px solid rgba(0, 229, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ── Selection ─────────────────────────────────────────────────────────── */
+
+::selection {
+  background: rgba(0, 229, 255, 0.2);
+  color: #EAFBFF;
 }

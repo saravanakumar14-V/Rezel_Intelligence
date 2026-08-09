@@ -1,11 +1,14 @@
 /**
- * Rezel — HUD animations
+ * Rezel — HUD & UI animations
  *
- * rezel-orb-pulse  : radial breathing for CommandOrb rings.
- *                    Applied at multiple staggered delays per ring.
- * rezel-voice-active : faster glow pulse when voice is listening/speaking.
+ * rezel-orb-pulse   : radial breathing for CommandOrb rings.
+ * rezel-voice-active: faster glow pulse when voice is listening/speaking.
  * rezel-fade-in     : generic fade-in for HUD elements.
+ * rezel-scan        : CRT scan-line sweep (boot screen).
+ * rezel-grid        : holographic grid scroll (boot screen).
  */
+
+/* ── CommandOrb breathing ─────────────────────────────────────────────── */
 
 @keyframes rezel-orb-pulse {
   0%, 100% {
@@ -18,6 +21,8 @@
   }
 }
 
+/* ── Voice-active glow ────────────────────────────────────────────────── */
+
 @keyframes rezel-voice-active {
   0%, 100% {
     transform: scale(1);
@@ -29,6 +34,8 @@
   }
 }
 
+/* ── Generic fade-in ──────────────────────────────────────────────────── */
+
 @keyframes rezel-fade-in {
   from {
     opacity: 0;
@@ -37,5 +44,47 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ── Boot screen — CRT scan line ──────────────────────────────────────── */
+
+@keyframes rezel-scan {
+  0%   { transform: translateY(-10px); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ── Boot screen — holographic grid scroll ─────────────────────────────── */
+
+@keyframes rezel-grid {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 40px; }
+}
+
+/* ── Nav indicator slide ──────────────────────────────────────────────── */
+
+@keyframes rezel-indicator-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Reduced motion — respect user preference
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

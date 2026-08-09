@@ -21,10 +21,11 @@ export default function BootTransition({ children, phase }: Props) {
     >
       {/* Holographic grid slowly moving downwards */}
       <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none animate-[grid_15s_linear_infinite]"
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: 'linear-gradient(to right, #00E5FF 1px, transparent 1px), linear-gradient(to bottom, #00E5FF 1px, transparent 1px)',
           backgroundSize: '40px 40px',
+          animation: 'rezel-grid 15s linear infinite',
         }}
       />
 
@@ -33,22 +34,14 @@ export default function BootTransition({ children, phase }: Props) {
 
       {/* CRT Scan Line (CSS Animation) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-20 opacity-50">
-        <div className="w-full h-[2px] bg-cyan-400/10 blur-[1px] animate-[scan_4s_linear_infinite]" />
+        <div
+          className="w-full h-[2px] bg-cyan-400/10 blur-[1px]"
+          style={{ animation: 'rezel-scan 4s linear infinite' }}
+        />
       </div>
       
       {/* Final transition flash when ready */}
       <div className={`absolute inset-0 bg-white z-30 transition-opacity duration-1000 pointer-events-none ${phase === "ready" ? "opacity-10" : "opacity-0"}`} />
-      
-      <style>{`
-        @keyframes scan {
-          0% { transform: translateY(-10px); }
-          100% { transform: translateY(100vh); }
-        }
-        @keyframes grid {
-          0% { background-position: 0 0; }
-          100% { background-position: 0 40px; }
-        }
-      `}</style>
 
       {children}
     </motion.div>

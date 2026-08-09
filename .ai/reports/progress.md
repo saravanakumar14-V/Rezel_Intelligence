@@ -253,6 +253,55 @@ Rezel – Desktop AI Operating Intelligence
 - PermissionConfirmModal: z-50 above panels at z-20
 - Existing Chat, Automation, Memory panels: unchanged
 
+### Milestone 7.6 – Transitions & Visual Polish ✅
+
+##### Panel transitions (PanelHost)
+- Refined animation: reduced x-offset (40→32px), lighter blur (6→4px), faster duration (0.35→0.3s)
+- Smoother cubic-bezier easing: (0.22, 0.68, 0.35, 1.0)
+- Added will-change: opacity, transform, filter for GPU compositing
+
+##### Mode navigation (ModeNav)
+- Active indicator now animates with CSS transitions (scaleX + opacity) instead of mount/unmount
+- Tighter tab gap (gap-1 → gap-0.5)
+- Explicit cubic-bezier easing on all state transitions (background, border, opacity)
+- Smooth font-weight and color transitions on label text
+
+##### CommandOrb state transitions
+- All ring borders, backgrounds, and corner accents transition smoothly (0.6s ease)
+- State label color transitions between states
+- No new JS animation loops — still pure CSS keyframes
+
+##### HologramHUD entrance
+- Refined fade-in: cubic-bezier easing, will-change set during animation then cleared
+
+##### Boot → Home transition (BootTransition)
+- Moved inline `<style>` keyframes (scan, grid) to consolidated animations.css
+- Now references rezel-scan, rezel-grid from global stylesheet
+- Removed inline style element — cleaner component
+
+##### Global motion system (animations.css)
+- Consolidated all keyframes: rezel-orb-pulse, rezel-voice-active, rezel-fade-in, rezel-scan, rezel-grid, rezel-indicator-in
+- Added @media (prefers-reduced-motion: reduce) — disables all animations/transitions
+
+##### Global styles (globals.css)
+- Scrollbar styling: thin 4px cyan, translucent, consistent across all panels
+- Firefox scrollbar-width: thin, scrollbar-color
+- Font smoothing: antialiased on both Webkit and Firefox
+- Focus-visible ring: 1px cyan at 50% opacity
+- Selection highlight: cyan at 20% opacity
+
+##### Responsive (PanelShell)
+- Added min-width: 280px to prevent panel from becoming unusably narrow
+- Adjusted max-width calc for smaller desktop windows
+
+##### Verification
+- TypeScript: 0 errors
+- Vite build: 2263 modules, 1.43s
+- No Rust changes required
+- All existing panels unchanged (Chat, Auto, Memory, Settings)
+- SpaceScene: continuously mounted, unaffected
+- PermissionConfirmModal: z-50 above panels at z-20
+
 ---
 
 ## Remaining Phase 7 Milestones
@@ -264,7 +313,7 @@ Rezel – Desktop AI Operating Intelligence
 | 7.3 Automation Interface | ✅ Complete |
 | 7.4 Memory Interface | ✅ Complete |
 | 7.5 Settings Interface | ✅ Complete |
-| 7.6 Transitions & Polish | ⬜ Pending |
+| 7.6 Transitions & Polish | ✅ Complete |
 | 7.7 Final Integration | ⬜ Pending |
 
 ---

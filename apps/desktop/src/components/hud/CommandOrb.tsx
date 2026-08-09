@@ -94,6 +94,7 @@ export default function CommandOrb({ state = "idle", onClick, className }: Comma
             background: cfg.pulse,
             animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
             animationDelay: "0s",
+            transition: "border-color 0.6s ease, background 0.6s ease",
           }}
           aria-hidden
         />
@@ -108,6 +109,7 @@ export default function CommandOrb({ state = "idle", onClick, className }: Comma
             animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
             animationDelay: "-0.4s",
             opacity: 0.85,
+            transition: "border-color 0.6s ease, background 0.6s ease",
           }}
           aria-hidden
         />
@@ -122,6 +124,7 @@ export default function CommandOrb({ state = "idle", onClick, className }: Comma
             animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
             animationDelay: "-0.8s",
             opacity: 0.7,
+            transition: "border-color 0.6s ease, background 0.6s ease",
           }}
           aria-hidden
         />
@@ -141,12 +144,20 @@ export default function CommandOrb({ state = "idle", onClick, className }: Comma
         {/* Corner accent lines (top-left / bottom-right) */}
         <div
           className="absolute top-0 left-0 w-4 h-4 border-t border-l rounded-tl-full"
-          style={{ borderColor: cfg.core, opacity: 0.5 }}
+          style={{
+            borderColor: cfg.core,
+            opacity: 0.5,
+            transition: "border-color 0.6s ease",
+          }}
           aria-hidden
         />
         <div
           className="absolute bottom-0 right-0 w-4 h-4 border-b border-r rounded-br-full"
-          style={{ borderColor: cfg.core, opacity: 0.5 }}
+          style={{
+            borderColor: cfg.core,
+            opacity: 0.5,
+            transition: "border-color 0.6s ease",
+          }}
           aria-hidden
         />
       </div>
@@ -159,6 +170,7 @@ export default function CommandOrb({ state = "idle", onClick, className }: Comma
           letterSpacing: "0.2em",
           color: cfg.core,
           opacity: 0.7,
+          transition: "color 0.6s ease",
         }}
         className="uppercase"
       >
