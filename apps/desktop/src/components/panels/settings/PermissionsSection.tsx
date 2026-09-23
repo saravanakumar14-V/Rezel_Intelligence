@@ -22,6 +22,7 @@ export const RISK_COLORS = {
 const OUTCOME_COLORS: Record<AuditOutcome, string> = {
   ALLOWED: '#00E5FF',
   DENIED_BY_USER: '#FFB74D',
+  DENIED_BY_POLICY: '#FF9F1C',
   BLOCKED_CRITICAL: '#FF4D6A',
   BLOCKED_UNSAFE: '#FF4D6A',
   ERROR: '#FF4D6A',
@@ -30,6 +31,7 @@ const OUTCOME_COLORS: Record<AuditOutcome, string> = {
 const OUTCOME_LABELS: Record<AuditOutcome, string> = {
   ALLOWED: 'Allowed',
   DENIED_BY_USER: 'Denied by User',
+  DENIED_BY_POLICY: 'Denied by Policy',
   BLOCKED_CRITICAL: 'Blocked (Critical)',
   BLOCKED_UNSAFE: 'Blocked (Unsafe)',
   ERROR: 'Error',
@@ -57,6 +59,7 @@ export default function PermissionsSection() {
   const outcomeCounts: Record<AuditOutcome, number> = {
     ALLOWED: 0,
     DENIED_BY_USER: 0,
+    DENIED_BY_POLICY: 0,
     BLOCKED_CRITICAL: 0,
     BLOCKED_UNSAFE: 0,
     ERROR: 0,
@@ -114,11 +117,20 @@ export default function PermissionsSection() {
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <span style={{ fontSize: '10px', color: '#E0F0FF' }}>
-            Session Grants ({grantedKeys.length})
+            Active Grants ({grantedKeys.length})
           </span>
-          <span style={{ fontSize: '9px', color: '#4BB8F0' }}>
-            Session Active
-          </span>
+          {grantedKeys.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                PermissionManager.revokeAll();
+                handleRefresh();
+              }}
+              className="text-[#FF3D71] text-[8.5px] font-mono hover:underline cursor-pointer"
+            >
+              REVOKE ALL
+            </button>
+          )}
         </div>
 
         {grantedKeys.length === 0 ? (
@@ -126,20 +138,37 @@ export default function PermissionsSection() {
             No active grants
           </span>
         ) : (
-          <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-            {grantedKeys.map((key) => (
-              <span
-                key={key}
-                className="px-2 py-0.5 rounded border border-[rgba(0,229,255,0.2)] bg-[rgba(0,229,255,0.06)]"
-                style={{
-                  fontSize: '9px',
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: '#E0F0FF',
-                }}
-              >
-                {key}
-              </span>
-            ))}
+          <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
+            {grantedKeys.map((key) => {
+              const [tool, action] = key.split(':');
+              return (
+                <div
+                  key={key}
+                  className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-[rgba(0,229,255,0.25)] bg-[rgba(0,229,255,0.08)]"
+                >
+                  <span
+                    style={{
+                      fontSize: '9px',
+                      fontFamily: "'JetBrains Mono', monospace",
+                      color: '#E0F0FF',
+                    }}
+                  >
+                    {key}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      PermissionManager.revoke(tool, action || 'execute');
+                      handleRefresh();
+                    }}
+                    className="text-white/40 hover:text-[#FF3D71] text-[9px] cursor-pointer"
+                    title="Revoke grant"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

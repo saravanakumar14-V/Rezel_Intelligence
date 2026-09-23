@@ -1,70 +1,51 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Search, X, RefreshCw, Database } from 'lucide-react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { Search, X, BookOpen, Brain, Sparkles, FolderGit2, Trash2 } from 'lucide-react';
 import PanelShell from './PanelShell';
 import ConversationList from './memory/ConversationList';
-import EntryList from './memory/EntryList';
 import MessageBubble from './chat/MessageBubble';
+import MemoryProvenanceCard from './memory/MemoryProvenanceCard';
+import KnowledgeIngestionDrawer from './memory/KnowledgeIngestionDrawer';
 import { LocalMemory } from '../../lib/memory/LocalMemory';
-import type { Message, MemoryEntry } from '../../lib/ai/types';
+import { GovernedMemoryStore } from '../../lib/ai/memory/GovernedMemoryStore';
+import { KnowledgeIngestionManager } from '../../lib/ai/knowledge/KnowledgeIngestionManager';
+import { ProjectContextManager } from '../../lib/ai/memory/project/ProjectContextManager';
+import type { Message } from '../../lib/ai/types';
+import type { GovernedMemoryEntry } from '../../lib/ai/memory/types';
+import type { KnowledgeDocument } from '../../lib/ai/knowledge/types';
+import { cn } from '../../lib/cn';
 
-/**
- * MemoryPanel
- *
- * Knowledge/memory console for Rezel.
- *
- * Uses the existing LocalMemory singleton exclusively:
- *  - listConversations() for conversation browser
- *  - getMessages() for selected conversation viewer
- *  - deleteConversation() for deletion
- *  - search() for text search
- *  - stats() for statistics display
- *  - store.entries for key-value entries
- *
- * Does NOT create a second memory system or introduce polling.
- */
 export default function MemoryPanel() {
-  // ── Data state ────────────────────────────────────────────────────────────
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState<'knowledge' | 'memories' | 'project' | 'conversations'>('knowledge');
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'conversations' | 'entries'>('conversations');
+  const [inspectedMemory, setInspectedMemory] = useState<GovernedMemoryEntry | null>(null);
 
-  // ── Load data from LocalMemory ────────────────────────────────────────────
+  // ── Long-term Governed Memories ───────────────────────────────────────────
+  const [governedMemories, setGovernedMemories] = useState<GovernedMemoryEntry[]>([]);
+  const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
+
+  useEffect(() => {
+    // Sync governed memory entries
+    setGovernedMemories(GovernedMemoryStore.search({}));
+    const unsubDoc = KnowledgeIngestionManager.subscribe((docs) => setDocuments(docs));
+    return () => unsubDoc();
+  }, [refreshKey]);
+
+  // ── Conversation Transcripts ──────────────────────────────────────────────
   const conversations = useMemo(() => {
     void refreshKey;
     return LocalMemory.listConversations();
   }, [refreshKey]);
 
-  const memStats = useMemo(() => {
-    void refreshKey;
-    return LocalMemory.stats();
-  }, [refreshKey]);
-
-  const allEntries = useMemo(() => {
-    void refreshKey;
-    return [
-      ...LocalMemory.getEntriesByCategory('preference'),
-      ...LocalMemory.getEntriesByCategory('context'),
-      ...LocalMemory.getEntriesByCategory('automation'),
-      ...LocalMemory.getEntriesByCategory('note'),
-    ];
-  }, [refreshKey]);
-
-  // ── Search ────────────────────────────────────────────────────────────────
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return null;
-    return LocalMemory.search(searchQuery.trim());
-  }, [searchQuery, refreshKey]);
-
-  // ── Conversation selection ────────────────────────────────────────────────
   const handleSelectConversation = useCallback((id: string) => {
     setSelectedConvId(id);
     setSelectedMessages(LocalMemory.getMessages(id));
   }, []);
 
-  // ── Delete ────────────────────────────────────────────────────────────────
-  const handleDelete = useCallback((id: string) => {
+  const handleDeleteConversation = useCallback((id: string) => {
     LocalMemory.deleteConversation(id);
     LocalMemory.save().catch(console.error);
     if (selectedConvId === id) {
@@ -74,237 +55,227 @@ export default function MemoryPanel() {
     setRefreshKey((k) => k + 1);
   }, [selectedConvId]);
 
-  // ── Refresh ───────────────────────────────────────────────────────────────
-  const handleRefresh = useCallback(async () => {
-    await LocalMemory.load(true);
+  const handleForgetMemory = useCallback((memoryId: string) => {
+    GovernedMemoryStore.delete(memoryId);
+    setInspectedMemory(null);
     setRefreshKey((k) => k + 1);
   }, []);
 
-  // ── Clear search ──────────────────────────────────────────────────────────
-  const clearSearch = useCallback(() => {
-    setSearchQuery('');
+  const handleDeleteDocument = useCallback((docId: string) => {
+    KnowledgeIngestionManager.deleteDocument(docId);
+    setRefreshKey((k) => k + 1);
   }, []);
 
-  // ── Back from message view ────────────────────────────────────────────────
-  const handleBack = useCallback(() => {
-    setSelectedConvId(null);
-    setSelectedMessages([]);
+  const handleClearProject = useCallback(() => {
+    try {
+      const activeId = ProjectContextManager.resolveActiveProjectId();
+      if (activeId) {
+        GovernedMemoryStore.forgetScope('PROJECT', activeId);
+        ProjectContextManager.deleteProject(activeId);
+        setRefreshKey((k) => k + 1);
+      }
+    } catch {
+      // Fallback
+      GovernedMemoryStore.forgetScope('PROJECT', 'default');
+      setRefreshKey((k) => k + 1);
+    }
   }, []);
 
-  // Displayed conversations (filtered by search or all)
-  const displayedConversations = searchResults
-    ? searchResults.conversations.map((c) => ({
-        id: c.id,
-        title: c.title,
-        messageCount: c.messages.length,
-        updatedAt: c.updatedAt,
-      }))
-    : conversations;
+  // Filtered lists
+  const filteredMemories = useMemo(() => {
+    if (!searchQuery.trim()) return governedMemories;
+    const lower = searchQuery.toLowerCase();
+    return governedMemories.filter((m) => m.content.toLowerCase().includes(lower) || m.type.toLowerCase().includes(lower));
+  }, [governedMemories, searchQuery]);
 
-  const displayedEntries: MemoryEntry[] = searchResults
-    ? searchResults.entries
-    : allEntries;
+  const filteredDocs = useMemo(() => {
+    if (!searchQuery.trim()) return documents;
+    const lower = searchQuery.toLowerCase();
+    return documents.filter((d) => d.title.toLowerCase().includes(lower) || d.sourcePath.toLowerCase().includes(lower));
+  }, [documents, searchQuery]);
 
   return (
-    <PanelShell title="Memory" subtitle={`${memStats.conversations} conv · ${memStats.entries} entries`}>
-      <div className="flex flex-col gap-3 h-full">
-
-        {/* ── Stats bar ──────────────────────────────────────────────── */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <Database size={11} color="#00E5FF" strokeWidth={1.5} />
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '9px',
-                color: '#4BB8F0',
-                opacity: 0.5,
-              }}
-            >
-              v{memStats.version}
-            </span>
-          </div>
-          <div className="flex-1" />
-          <button
-            onClick={handleRefresh}
-            aria-label="Refresh memory"
-            className="flex items-center justify-center w-6 h-6 rounded cursor-pointer transition-opacity hover:opacity-80 active:scale-95"
-            style={{
-              background: 'rgba(0,229,255,0.06)',
-              border: '1px solid rgba(0,229,255,0.12)',
-            }}
-          >
-            <RefreshCw size={11} color="#00E5FF" strokeWidth={1.5} />
-          </button>
-        </div>
-
-        {/* ── Search ─────────────────────────────────────────────────── */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-          style={{
-            background: 'rgba(2,6,18,0.50)',
-            border: '1px solid rgba(0,229,255,0.08)',
-          }}
-        >
-          <Search size={12} color="#4BB8F0" strokeWidth={1.5} style={{ opacity: 0.4 }} />
+    <PanelShell title="Intelligence" subtitle="Memory & Knowledge System">
+      <div className="flex flex-col gap-3.5 h-full">
+        {/* ── Search & Filter Omnibar ─────────────────────────────────── */}
+        <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-black/40 border border-[#00E5FF]/20">
+          <Search size={13} className="text-[#00E5FF]/60" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search memory..."
-            className="flex-1 outline-none bg-transparent"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '12px',
-              color: '#EAFBFF',
-            }}
+            placeholder="Search indexed knowledge, facts, and conversation history..."
+            className="flex-1 bg-transparent border-none outline-none font-sans text-xs text-[#EAFBFF] placeholder:text-white/30"
           />
           {searchQuery && (
-            <button
-              onClick={clearSearch}
-              aria-label="Clear search"
-              className="cursor-pointer opacity-40 hover:opacity-70 transition-opacity"
-              style={{ background: 'none', border: 'none' }}
-            >
-              <X size={12} color="#7ECFFF" strokeWidth={2} />
+            <button type="button" onClick={() => setSearchQuery('')} className="text-white/40 hover:text-white">
+              <X size={12} />
             </button>
           )}
         </div>
 
-        {/* ── Search result count ────────────────────────────────────── */}
-        {searchResults && (
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '8px',
-              color: '#4BB8F0',
-              opacity: 0.5,
-              letterSpacing: '0.10em',
-            }}
-          >
-            {searchResults.conversations.length} conv + {searchResults.entries.length} entries found
-          </span>
+        {/* ── Mode Tabs ───────────────────────────────────────────────── */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          {[
+            { id: 'knowledge', label: 'KNOWLEDGE BASE', icon: BookOpen, count: documents.length },
+            { id: 'memories', label: 'LONG-TERM MEMORY', icon: Brain, count: governedMemories.length },
+            { id: 'project', label: 'PROJECT CONTEXT', icon: FolderGit2 },
+            { id: 'conversations', label: 'TRANSCRIPTS', icon: Sparkles, count: conversations.length },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(tab.id as any);
+                  setSelectedConvId(null);
+                  setInspectedMemory(null);
+                }}
+                className={cn(
+                  'flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-mono text-[9px] font-bold tracking-wider uppercase border transition-all cursor-pointer whitespace-nowrap',
+                  isActive
+                    ? 'bg-[#00E5FF]/18 text-[#00E5FF] border-[#00E5FF]/40 shadow-[0_0_8px_rgba(0,229,255,0.2)]'
+                    : 'bg-white/5 text-white/50 border-white/10 hover:text-white/80 hover:bg-white/10'
+                )}
+              >
+                <Icon size={11} />
+                <span>{tab.label}</span>
+                {tab.count !== undefined && (
+                  <span className="opacity-50 text-[8px]">({tab.count})</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Inspector Drawer if inspecting memory ───────────────────── */}
+        {inspectedMemory && (
+          <MemoryProvenanceCard
+            memory={inspectedMemory}
+            onClose={() => setInspectedMemory(null)}
+            onForget={() => handleForgetMemory(inspectedMemory.memoryId)}
+          />
         )}
 
-        {/* ── Message viewer (when conversation selected) ────────────── */}
-        {selectedConvId && (
-          <>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleBack}
-                className="cursor-pointer transition-opacity hover:opacity-80"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '9px',
-                  color: '#00E5FF',
-                  background: 'rgba(0,229,255,0.06)',
-                  border: '1px solid rgba(0,229,255,0.15)',
-                  borderRadius: '6px',
-                  padding: '2px 8px',
-                  letterSpacing: '0.10em',
-                }}
-              >
-                ← BACK
-              </button>
-              <span
-                className="truncate"
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '11px',
-                  color: '#7ECFFF',
-                  opacity: 0.6,
-                }}
-              >
-                {conversations.find((c) => c.id === selectedConvId)?.title ?? 'Conversation'}
-              </span>
-            </div>
-            <div className="flex-1 min-h-0 overflow-y-auto -mx-5 px-5">
-              {selectedMessages.length === 0 ? (
-                <div className="flex items-center justify-center py-8 opacity-30">
-                  <span
-                    style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: '9px',
-                      color: '#7ECFFF',
-                    }}
+        {/* ── Tab Views ───────────────────────────────────────────────── */}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+          {/* TAB 1: KNOWLEDGE SOURCES */}
+          {activeTab === 'knowledge' && (
+            <div className="flex flex-col gap-3">
+              <KnowledgeIngestionDrawer onIngested={() => setRefreshKey((k) => k + 1)} />
+
+              <div className="flex flex-col gap-1.5 mt-1">
+                {filteredDocs.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1024]/60 border border-white/5 hover:border-[#00E5FF]/30 transition-all"
                   >
-                    EMPTY CONVERSATION
-                  </span>
+                    <div className="flex flex-col gap-1 max-w-[75%]">
+                      <span className="font-mono text-xs font-semibold text-[#EAFBFF] truncate">
+                        {doc.title}
+                      </span>
+                      <span className="font-mono text-[9px] text-[#7ECFFF]/60 truncate">
+                        {doc.sourcePath} • {doc.chunkCount} chunks indexed
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteDocument(doc.id)}
+                      className="text-white/30 hover:text-[#FF3D71] p-1.5 rounded transition-colors"
+                      title="Delete indexed source"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: LONG-TERM MEMORIES */}
+          {activeTab === 'memories' && (
+            <div className="flex flex-col gap-1.5">
+              {filteredMemories.length === 0 ? (
+                <div className="p-6 text-center text-white/40 font-mono text-xs">
+                  No governed memories captured yet.
                 </div>
               ) : (
-                <div className="flex flex-col">
+                filteredMemories.map((mem) => (
+                  <div
+                    key={mem.memoryId}
+                    onClick={() => setInspectedMemory(mem)}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1024]/60 border border-white/5 hover:border-[#00E5FF]/30 transition-all cursor-pointer"
+                  >
+                    <div className="flex flex-col gap-1 max-w-[80%]">
+                      <span className="font-sans text-xs text-[#EAFBFF] line-clamp-2">
+                        "{mem.content}"
+                      </span>
+                      <div className="flex items-center gap-2 font-mono text-[8.5px] text-[#7ECFFF]/60">
+                        <span>{mem.type}</span>
+                        <span>•</span>
+                        <span>{mem.scope}</span>
+                      </div>
+                    </div>
+                    <span className="font-mono text-[8px] text-[#00E5FF] bg-[#00E5FF]/10 px-1.5 py-0.5 rounded border border-[#00E5FF]/25">
+                      PROVENANCE
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: PROJECT CONTEXT */}
+          {activeTab === 'project' && (
+            <div className="flex flex-col gap-3 p-2 rounded-xl bg-[#060B1E]/60 border border-white/5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs font-bold text-[#EAFBFF]">
+                  ACTIVE WORKSPACE CONTEXT
+                </span>
+                <button
+                  type="button"
+                  onClick={handleClearProject}
+                  className="font-mono text-[9px] text-[#FF3D71] border border-[#FF3D71]/30 bg-[#FF3D71]/10 px-2 py-1 rounded hover:bg-[#FF3D71]/20 cursor-pointer"
+                >
+                  FORGET PROJECT CONTEXT
+                </button>
+              </div>
+              <p className="font-sans text-xs text-white/60">
+                Rezel retains project decisions, active scene metadata, and workflow checkpoints associated with your current creative environment.
+              </p>
+            </div>
+          )}
+
+          {/* TAB 4: CONVERSATIONS */}
+          {activeTab === 'conversations' && (
+            <div>
+              {selectedConvId ? (
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedConvId(null)}
+                    className="font-mono text-xs text-[#00E5FF] hover:underline mb-1"
+                  >
+                    ← Back to transcripts
+                  </button>
                   {selectedMessages.map((msg, i) => (
-                    <MessageBubble key={`${msg.timestamp}-${i}`} message={msg} />
+                    <MessageBubble key={i} message={msg} />
                   ))}
                 </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* ── Browse mode (no conversation selected) ─────────────────── */}
-        {!selectedConvId && (
-          <>
-            {/* Tab switcher */}
-            <div className="flex gap-1">
-              <TabButton
-                label={`CONVERSATIONS (${displayedConversations.length})`}
-                isActive={activeTab === 'conversations'}
-                onClick={() => setActiveTab('conversations')}
-              />
-              <TabButton
-                label={`ENTRIES (${displayedEntries.length})`}
-                isActive={activeTab === 'entries'}
-                onClick={() => setActiveTab('entries')}
-              />
-            </div>
-
-            {/* Tab content */}
-            <div className="flex-1 min-h-0 overflow-y-auto -mx-5 px-5">
-              {activeTab === 'conversations' ? (
+              ) : (
                 <ConversationList
-                  conversations={displayedConversations}
+                  conversations={conversations}
                   selectedId={selectedConvId}
                   onSelect={handleSelectConversation}
-                  onDelete={handleDelete}
+                  onDelete={handleDeleteConversation}
                 />
-              ) : (
-                <EntryList entries={displayedEntries} />
               )}
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </PanelShell>
-  );
-}
-
-// ─── TabButton ────────────────────────────────────────────────────────────────
-
-function TabButton({
-  label,
-  isActive,
-  onClick,
-}: {
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="px-2.5 py-1 rounded-md cursor-pointer transition-all duration-200 outline-none"
-      style={{
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: '8px',
-        letterSpacing: '0.12em',
-        color: isActive ? '#00E5FF' : '#4BB8F0',
-        background: isActive ? 'rgba(0,229,255,0.08)' : 'transparent',
-        border: isActive ? '1px solid rgba(0,229,255,0.18)' : '1px solid transparent',
-        opacity: isActive ? 1 : 0.45,
-      }}
-    >
-      {label}
-    </button>
   );
 }

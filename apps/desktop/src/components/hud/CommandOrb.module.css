@@ -1,0 +1,417 @@
+/**
+ * Rezel OS — CommandOrb CSS Module
+ * B1 token-integrated voice state visualization
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rz-space-2, 8px);
+  user-select: none;
+  transition: opacity var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+}
+
+.interactive {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.nonInteractive {
+  cursor: default;
+  pointer-events: none;
+}
+
+.container:focus-visible {
+  outline: 1px solid var(--rz-border-color-focus, rgba(0, 229, 255, 0.5));
+  outline-offset: 4px;
+  border-radius: var(--rz-radius-lg, 8px);
+}
+
+/* ── Orb Stack Dimensions ───────────────────────────────────────────────── */
+
+.stack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+}
+
+/* ── Concentric Rings ───────────────────────────────────────────────────── */
+
+.outerRing,
+.midRing,
+.innerRing {
+  position: absolute;
+  border-radius: var(--rz-radius-full, 9999px);
+  pointer-events: none;
+  transition: border-color var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              background var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              box-shadow var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              transform var(--rz-duration-panel, 350ms) var(--rz-ease-standard);
+}
+
+.outerRing {
+  width: 88px;
+  height: 88px;
+}
+
+.midRing {
+  width: 64px;
+  height: 64px;
+  opacity: 0.85;
+}
+
+.innerRing {
+  width: 44px;
+  height: 44px;
+  opacity: 0.70;
+}
+
+/* ── Core Orb ───────────────────────────────────────────────────────────── */
+
+.core {
+  position: relative;
+  z-index: 10;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--rz-radius-full, 9999px);
+  transition: background var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              box-shadow var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              transform var(--rz-duration-panel, 350ms) var(--rz-ease-standard);
+}
+
+/* ── Telemetry Bracket Accents ──────────────────────────────────────────── */
+
+.bracketTopLeft,
+.bracketBottomRight {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+  transition: border-color var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              opacity var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+  pointer-events: none;
+}
+
+.bracketTopLeft {
+  top: 0;
+  left: 0;
+  border-top: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+  border-top-left-radius: var(--rz-radius-full, 9999px);
+}
+
+.bracketBottomRight {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  border-bottom-right-radius: var(--rz-radius-full, 9999px);
+}
+
+/* ── State Label ────────────────────────────────────────────────────────── */
+
+.label {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-badge-size, 9px);
+  font-weight: var(--rz-text-badge-weight, 600);
+  letter-spacing: var(--rz-text-badge-tracking, 0.18em);
+  text-transform: uppercase;
+  opacity: 0.85;
+  transition: color var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              opacity var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE ANIMATIONS & THEMES (Pure CSS Keyframes & B1 Tokens)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. IDLE (Calm Breathing, Cyan Core, 3.0s cycle) ─────────────────────── */
+
+.state-idle .outerRing {
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  background: rgba(0, 229, 255, 0.04);
+  animation: orb-breathe-idle 3.2s ease-in-out infinite;
+}
+
+.state-idle .midRing {
+  border: 1px solid rgba(0, 229, 255, 0.20);
+  background: rgba(0, 229, 255, 0.05);
+  animation: orb-breathe-idle 3.2s ease-in-out infinite;
+  animation-delay: -0.5s;
+}
+
+.state-idle .innerRing {
+  border: 1px solid rgba(0, 229, 255, 0.30);
+  background: rgba(0, 229, 255, 0.08);
+  animation: orb-breathe-idle 3.2s ease-in-out infinite;
+  animation-delay: -1.0s;
+}
+
+.state-idle .core {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, var(--rz-voice-idle-color, #00E5FF) 55%, rgba(0, 229, 255, 0.2) 100%);
+  box-shadow: 0 0 14px var(--rz-voice-idle-color, #00E5FF),
+              0 0 30px var(--rz-voice-idle-glow, rgba(0, 229, 255, 0.35));
+}
+
+.state-idle .bracketTopLeft,
+.state-idle .bracketBottomRight {
+  color: var(--rz-voice-idle-color, #00E5FF);
+}
+
+.state-idle .label {
+  color: var(--rz-voice-idle-color, #00E5FF);
+}
+
+@keyframes orb-breathe-idle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.70;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.30;
+  }
+}
+
+/* ── 2. LISTENING (Ice-Blue Accent, Expanding Ring, 1.4s cycle) ───────────── */
+
+.state-listening .outerRing {
+  border: 1px solid rgba(126, 207, 255, 0.35);
+  background: rgba(126, 207, 255, 0.10);
+  animation: orb-listen-pulse 1.4s ease-out infinite;
+}
+
+.state-listening .midRing {
+  border: 1px solid rgba(126, 207, 255, 0.40);
+  background: rgba(126, 207, 255, 0.12);
+  animation: orb-listen-pulse 1.4s ease-out infinite;
+  animation-delay: -0.35s;
+}
+
+.state-listening .innerRing {
+  border: 1px solid rgba(126, 207, 255, 0.50);
+  background: rgba(126, 207, 255, 0.16);
+  animation: orb-listen-pulse 1.4s ease-out infinite;
+  animation-delay: -0.7s;
+}
+
+.state-listening .core {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, var(--rz-voice-listening-color, #7ECFFF) 55%, rgba(126, 207, 255, 0.3) 100%);
+  box-shadow: 0 0 18px var(--rz-voice-listening-color, #7ECFFF),
+              0 0 36px var(--rz-voice-listening-glow, rgba(126, 207, 255, 0.50)),
+              0 0 60px rgba(126, 207, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.state-listening .bracketTopLeft,
+.state-listening .bracketBottomRight {
+  color: var(--rz-voice-listening-color, #7ECFFF);
+  opacity: 0.85;
+}
+
+.state-listening .label {
+  color: var(--rz-voice-listening-color, #7ECFFF);
+}
+
+@keyframes orb-listen-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 0.40;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+}
+
+/* ── 3. THINKING (Electric-Blue Accent, Rapid Orbital Motion, 0.9s cycle) ─── */
+
+.state-thinking .outerRing {
+  border: 1px dashed rgba(0, 176, 255, 0.45);
+  background: rgba(0, 176, 255, 0.08);
+  animation: orb-spin-clockwise 3s linear infinite, orb-think-pulse 0.9s ease-in-out infinite;
+}
+
+.state-thinking .midRing {
+  border: 1px dashed rgba(0, 176, 255, 0.55);
+  background: rgba(0, 176, 255, 0.10);
+  animation: orb-spin-counter 2s linear infinite, orb-think-pulse 0.9s ease-in-out infinite;
+  animation-delay: 0s, -0.3s;
+}
+
+.state-thinking .innerRing {
+  border: 1px solid rgba(0, 176, 255, 0.65);
+  background: rgba(0, 176, 255, 0.14);
+  animation: orb-spin-clockwise 1.2s linear infinite, orb-think-pulse 0.9s ease-in-out infinite;
+  animation-delay: 0s, -0.6s;
+}
+
+.state-thinking .core {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, var(--rz-voice-thinking-color, #00B0FF) 55%, rgba(0, 176, 255, 0.3) 100%);
+  box-shadow: 0 0 16px var(--rz-voice-thinking-color, #00B0FF),
+              0 0 34px var(--rz-voice-thinking-glow, rgba(0, 176, 255, 0.65));
+}
+
+.state-thinking .bracketTopLeft,
+.state-thinking .bracketBottomRight {
+  color: var(--rz-voice-thinking-color, #00B0FF);
+  animation: orb-bracket-pulse 0.9s ease-in-out infinite;
+}
+
+.state-thinking .label {
+  color: var(--rz-voice-thinking-color, #00B0FF);
+}
+
+@keyframes orb-spin-clockwise {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes orb-spin-counter {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+@keyframes orb-think-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+@keyframes orb-bracket-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.9; }
+}
+
+/* ── 4. SPEAKING (Cyan Sound-Wave Amplitude Pulse, 1.2s cycle) ───────────── */
+
+.state-speaking .outerRing {
+  border: 1px solid rgba(0, 229, 255, 0.40);
+  background: rgba(0, 229, 255, 0.10);
+  animation: orb-wave-pulse 1.2s cubic-bezier(0.22, 0.68, 0.35, 1.0) infinite;
+}
+
+.state-speaking .midRing {
+  border: 1px solid rgba(0, 229, 255, 0.50);
+  background: rgba(0, 229, 255, 0.14);
+  animation: orb-wave-pulse 1.2s cubic-bezier(0.22, 0.68, 0.35, 1.0) infinite;
+  animation-delay: -0.3s;
+}
+
+.state-speaking .innerRing {
+  border: 1px solid rgba(0, 229, 255, 0.60);
+  background: rgba(0, 229, 255, 0.18);
+  animation: orb-wave-pulse 1.2s cubic-bezier(0.22, 0.68, 0.35, 1.0) infinite;
+  animation-delay: -0.6s;
+}
+
+.state-speaking .core {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, var(--rz-voice-speaking-color, #00E5FF) 50%, rgba(0, 229, 255, 0.3) 100%);
+  box-shadow: 0 0 20px var(--rz-voice-speaking-color, #00E5FF),
+              0 0 40px var(--rz-voice-speaking-glow, rgba(0, 229, 255, 0.70)),
+              0 0 70px rgba(0, 229, 255, 0.35);
+  animation: orb-core-speaking 1.2s ease-in-out infinite;
+}
+
+.state-speaking .bracketTopLeft,
+.state-speaking .bracketBottomRight {
+  color: var(--rz-voice-speaking-color, #00E5FF);
+  opacity: 0.9;
+}
+
+.state-speaking .label {
+  color: var(--rz-voice-speaking-color, #00E5FF);
+}
+
+@keyframes orb-wave-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.90;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(0.92);
+    opacity: 0.90;
+  }
+}
+
+@keyframes orb-core-speaking {
+  0%, 100% { transform: scale(1.0); }
+  50%      { transform: scale(1.12); }
+}
+
+/* ── 5. INTERRUPTED (Coral Danger Flash, Fast Collapse) ──────────────────── */
+
+.state-interrupted .outerRing {
+  border: 1px solid rgba(255, 82, 82, 0.45);
+  background: rgba(255, 82, 82, 0.12);
+  animation: orb-interrupted-flash 0.6s ease-out infinite;
+}
+
+.state-interrupted .midRing {
+  border: 1px solid rgba(255, 82, 82, 0.55);
+  background: rgba(255, 82, 82, 0.16);
+  animation: orb-interrupted-flash 0.6s ease-out infinite;
+  animation-delay: -0.15s;
+}
+
+.state-interrupted .innerRing {
+  border: 1px solid rgba(255, 82, 82, 0.65);
+  background: rgba(255, 82, 82, 0.20);
+  animation: orb-interrupted-flash 0.6s ease-out infinite;
+  animation-delay: -0.30s;
+}
+
+.state-interrupted .core {
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, var(--rz-voice-interrupted-color, #FF5252) 50%, rgba(255, 82, 82, 0.3) 100%);
+  box-shadow: 0 0 22px var(--rz-voice-interrupted-color, #FF5252),
+              0 0 44px var(--rz-voice-interrupted-glow, rgba(255, 82, 82, 0.60));
+  transform: scale(0.95);
+}
+
+.state-interrupted .bracketTopLeft,
+.state-interrupted .bracketBottomRight {
+  color: var(--rz-voice-interrupted-color, #FF5252);
+  opacity: 1.0;
+}
+
+.state-interrupted .label {
+  color: var(--rz-voice-interrupted-color, #FF5252);
+}
+
+@keyframes orb-interrupted-flash {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0.90;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.35;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION (A11y Compliant)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .outerRing,
+  .midRing,
+  .innerRing,
+  .core,
+  .bracketTopLeft,
+  .bracketBottomRight {
+    animation: none !important;
+    transform: none !important;
+  }
+}

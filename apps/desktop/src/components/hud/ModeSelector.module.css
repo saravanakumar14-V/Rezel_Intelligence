@@ -1,0 +1,274 @@
+/**
+ * Rezel OS — ModeSelector CSS Module
+ * Experience profile glass pill and dropdown menu
+ */
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* ── Trigger Pill ───────────────────────────────────────────────────────── */
+
+.pillButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rz-space-1, 4px);
+  padding: 3px 8px;
+  background: var(--rz-bg-surface-subtle, rgba(255, 255, 255, 0.04));
+  backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  -webkit-backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  border: 1px solid var(--rz-border-color-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--rz-radius-lg, 8px);
+  cursor: pointer;
+  outline: none;
+  transition: background var(--rz-duration-micro, 150ms) var(--rz-ease-standard),
+              border-color var(--rz-duration-fast, 250ms) var(--rz-ease-standard),
+              box-shadow var(--rz-duration-fast, 250ms) var(--rz-ease-standard),
+              transform var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+.pillButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--rz-border-color-hairline, rgba(0, 229, 255, 0.25));
+}
+
+.pillButton:active {
+  transform: scale(0.97);
+}
+
+.pillButton:focus-visible {
+  outline: 1px solid var(--rz-border-color-focus, rgba(0, 229, 255, 0.5));
+  outline-offset: 2px;
+}
+
+/* ── Mode-Specific Pill Accents ─────────────────────────────────────────── */
+
+.mode-auto {
+  border-color: rgba(0, 229, 255, 0.20);
+}
+.mode-auto .icon,
+.mode-auto .label {
+  color: var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.mode-friendly {
+  border-color: rgba(126, 207, 255, 0.25);
+}
+.mode-friendly .icon,
+.mode-friendly .label {
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+}
+
+.mode-creator {
+  border-color: rgba(179, 136, 255, 0.30);
+  box-shadow: 0 0 12px rgba(179, 136, 255, 0.15);
+}
+.mode-creator .icon,
+.mode-creator .label {
+  color: var(--rz-accent-creator-purple, #B388FF);
+}
+
+.mode-developer {
+  border-color: rgba(0, 230, 118, 0.30);
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.15);
+}
+.mode-developer .icon,
+.mode-developer .label {
+  color: var(--rz-accent-dev-emerald, #00E676);
+}
+
+/* ── Label & Icon ───────────────────────────────────────────────────────── */
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+}
+
+.label {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-badge-size, 9px);
+  font-weight: var(--rz-text-badge-weight, 600);
+  letter-spacing: var(--rz-text-badge-tracking, 0.18em);
+  text-transform: uppercase;
+  transition: color var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+}
+
+.chevron {
+  opacity: 0.5;
+  transition: transform var(--rz-duration-fast, 250ms) var(--rz-ease-standard),
+              opacity var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+  opacity: 0.9;
+}
+
+/* ── Dropdown Menu ──────────────────────────────────────────────────────── */
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 200px;
+  max-width: calc(100vw - 32px);
+  padding: 4px;
+  background: var(--rz-bg-glass-elevated, rgba(13, 21, 54, 0.95));
+  backdrop-filter: var(--rz-glass-backdrop, blur(16px) saturate(180%));
+  -webkit-backdrop-filter: var(--rz-glass-backdrop, blur(16px) saturate(180%));
+  border: 1px solid rgba(0, 229, 255, 0.20);
+  border-radius: var(--rz-radius-xl, 12px);
+  box-shadow: var(--rz-glass-shadow-elevated, 0 16px 48px 0 rgba(0, 0, 0, 0.85));
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: menu-fade-in var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+@keyframes menu-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menuHeader {
+  padding: 4px 8px 3px 8px;
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+  border-bottom: 1px solid var(--rz-border-color-subtle, rgba(255, 255, 255, 0.08));
+  margin-bottom: 2px;
+}
+
+/* ── Menu Item ──────────────────────────────────────────────────────────── */
+
+.menuItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rz-space-2, 8px);
+  padding: 6px 8px;
+  border-radius: var(--rz-radius-md, 6px);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  transition: background var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+.menuItem:hover,
+.menuItemFocused {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.menuItemActive {
+  background: rgba(0, 229, 255, 0.08);
+}
+
+.menuItem:focus-visible {
+  outline: 1px solid var(--rz-border-color-focus, rgba(0, 229, 255, 0.5));
+}
+
+.itemIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+  transition: color var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itemLabel {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.itemDesc {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+}
+
+.activeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 6px var(--rz-accent-cyan-core, #00E5FF);
+}
+
+/* ── Active State Item Highlights ───────────────────────────────────────── */
+
+.menuItemActive .itemIconWrapper {
+  color: var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.menuItemActive.item-creator .itemIconWrapper,
+.menuItemActive.item-creator .itemLabel {
+  color: var(--rz-accent-creator-purple, #B388FF);
+}
+.menuItemActive.item-creator .activeDot {
+  background: var(--rz-accent-creator-purple, #B388FF);
+  box-shadow: 0 0 6px var(--rz-accent-creator-purple, #B388FF);
+}
+
+.menuItemActive.item-developer .itemIconWrapper,
+.menuItemActive.item-developer .itemLabel {
+  color: var(--rz-accent-dev-emerald, #00E676);
+}
+.menuItemActive.item-developer .activeDot {
+  background: var(--rz-accent-dev-emerald, #00E676);
+  box-shadow: 0 0 6px var(--rz-accent-dev-emerald, #00E676);
+}
+
+.menuItemActive.item-friendly .itemIconWrapper,
+.menuItemActive.item-friendly .itemLabel {
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+}
+.menuItemActive.item-friendly .activeDot {
+  background: var(--rz-accent-ice-blue, #7ECFFF);
+  box-shadow: 0 0 6px var(--rz-accent-ice-blue, #7ECFFF);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdownMenu {
+    animation: none !important;
+  }
+}

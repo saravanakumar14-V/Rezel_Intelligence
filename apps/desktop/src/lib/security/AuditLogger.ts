@@ -3,6 +3,7 @@ import type { RiskLevel } from './PermissionManager';
 export type AuditOutcome =
   | 'ALLOWED'
   | 'DENIED_BY_USER'
+  | 'DENIED_BY_POLICY'
   | 'BLOCKED_CRITICAL'
   | 'BLOCKED_UNSAFE'
   | 'ERROR';
@@ -35,10 +36,24 @@ const MAX_ENTRIES = 500;
 const OUTCOME_ICON: Record<AuditOutcome, string> = {
   ALLOWED:          '✅',
   DENIED_BY_USER:   '🚫',
+  DENIED_BY_POLICY: '🛑',
   BLOCKED_CRITICAL: '🔴',
   BLOCKED_UNSAFE:   '⚠️',
   ERROR:            '❌',
 };
+
+function redactArgs(args: unknown[]): unknown[] {
+  try {
+    return JSON.parse(JSON.stringify(args, (key, value) => {
+      if (typeof key === 'string' && /key|password|secret|token|api_key/i.test(key)) {
+        return '***[REDACTED]***';
+      }
+      return value;
+    }));
+  } catch {
+    return ['***[UNSERIALIZABLE_ARGS]***'];
+  }
+}
 
 class AuditLoggerImpl {
   private log: AuditEntry[] = [];
@@ -60,7 +75,7 @@ class AuditLoggerImpl {
       timestamp: new Date().toISOString(),
       tool,
       action,
-      args,
+      args: redactArgs(args),
       risk,
       outcome,
       reason: options.reason,
@@ -75,7 +90,7 @@ class AuditLoggerImpl {
     }
 
     // Dev console output
-    if (import.meta.env.DEV) {
+    if ((import.meta as any)?.env?.DEV) {
       const icon = OUTCOME_ICON[outcome];
       console.info(
         `[AuditLog] ${icon} [${risk}] ${tool}:${action}`,

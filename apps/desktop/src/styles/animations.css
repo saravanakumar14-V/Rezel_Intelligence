@@ -1,14 +1,29 @@
 /**
- * Rezel — HUD & UI animations
- *
- * rezel-orb-pulse   : radial breathing for CommandOrb rings.
- * rezel-voice-active: faster glow pulse when voice is listening/speaking.
- * rezel-fade-in     : generic fade-in for HUD elements.
- * rezel-scan        : CRT scan-line sweep (boot screen).
- * rezel-grid        : holographic grid scroll (boot screen).
+ * Rezel OS — Motion & Animation Tokens
+ * Single source of truth from DESIGN.md
  */
 
-/* ── CommandOrb breathing ─────────────────────────────────────────────── */
+:root {
+  /* ── Easing Timing Functions ───────────────────────────────────────────── */
+  --rz-ease-standard: cubic-bezier(0.22, 0.68, 0.35, 1.0);
+  --rz-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --rz-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --rz-ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── Duration Tokens ───────────────────────────────────────────────────── */
+  --rz-duration-micro: 150ms;
+  --rz-duration-fast: 250ms;
+  --rz-duration-panel: 350ms;
+  --rz-duration-mode-shift: 500ms;
+  --rz-duration-atmosphere: 1000ms;
+
+  /* ── Standard Transitions ──────────────────────────────────────────────── */
+  --rz-transition-micro: all var(--rz-duration-micro) var(--rz-ease-standard);
+  --rz-transition-fast: all var(--rz-duration-fast) var(--rz-ease-standard);
+  --rz-transition-panel: all var(--rz-duration-panel) var(--rz-ease-standard);
+}
+
+/* ── CommandOrb Breathing ─────────────────────────────────────────────── */
 
 @keyframes rezel-orb-pulse {
   0%, 100% {
@@ -21,7 +36,7 @@
   }
 }
 
-/* ── Voice-active glow ────────────────────────────────────────────────── */
+/* ── Voice-Active Glow ────────────────────────────────────────────────── */
 
 @keyframes rezel-voice-active {
   0%, 100% {
@@ -34,7 +49,7 @@
   }
 }
 
-/* ── Generic fade-in ──────────────────────────────────────────────────── */
+/* ── Generic Fade-In ──────────────────────────────────────────────────── */
 
 @keyframes rezel-fade-in {
   from {
@@ -47,21 +62,21 @@
   }
 }
 
-/* ── Boot screen — CRT scan line ──────────────────────────────────────── */
+/* ── Boot Screen — CRT Scan Line ──────────────────────────────────────── */
 
 @keyframes rezel-scan {
   0%   { transform: translateY(-10px); }
   100% { transform: translateY(100vh); }
 }
 
-/* ── Boot screen — holographic grid scroll ─────────────────────────────── */
+/* ── Boot Screen — Holographic Grid Scroll ─────────────────────────────── */
 
 @keyframes rezel-grid {
   0%   { background-position: 0 0; }
   100% { background-position: 0 40px; }
 }
 
-/* ── Nav indicator slide ──────────────────────────────────────────────── */
+/* ── Nav Indicator Slide ──────────────────────────────────────────────── */
 
 @keyframes rezel-indicator-in {
   from {
@@ -74,8 +89,15 @@
   }
 }
 
+/* ── Workflow Step Spinner ────────────────────────────────────────────── */
+
+@keyframes rezel-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
-   Reduced motion — respect user preference
+   Reduced Motion — Respect User Accessibility Preference
    ═══════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {

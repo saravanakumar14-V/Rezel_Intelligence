@@ -1,0 +1,170 @@
+.trustRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* ── Hero Authority Card ─────────────────────────────────────────── */
+.heroAuthorityCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(4, 20, 30, 0.8);
+  border: 1px solid rgba(0, 255, 174, 0.3);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(0, 255, 174, 0.08);
+}
+
+.heroHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heroTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #00FFAE;
+  text-transform: uppercase;
+}
+
+.shieldDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #00FFAE;
+  box-shadow: 0 0 8px #00FFAE;
+}
+
+.heroStatusText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: #EAFBFF;
+}
+
+.heroDescription {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  color: rgba(210, 255, 235, 0.85);
+  line-height: 1.45;
+}
+
+.heroMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: rgba(126, 207, 255, 0.65);
+}
+
+/* ── Mode Switcher Tabs ─────────────────────────────────────────── */
+.modeTabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6px;
+}
+
+.modeTab {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modeTab:hover {
+  color: #00FFAE;
+  border-color: rgba(0, 255, 174, 0.3);
+}
+
+.modeTabActive {
+  background: rgba(0, 255, 174, 0.15);
+  color: #00FFAE;
+  border-color: rgba(0, 255, 174, 0.45);
+  box-shadow: 0 0 10px rgba(0, 255, 174, 0.15);
+}
+
+/* ── Grant Items ────────────────────────────────────────────────── */
+.grantList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grantCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: rgba(6, 14, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.grantCard:hover {
+  background: rgba(8, 20, 48, 0.85);
+  border-color: rgba(0, 255, 174, 0.3);
+}
+
+.grantInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.grantCapability {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #EAFBFF;
+}
+
+.grantScope {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  color: rgba(126, 207, 255, 0.6);
+}
+
+.revokeBtn {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #FF5252;
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.revokeBtn:hover {
+  background: rgba(255, 82, 82, 0.25);
+  box-shadow: 0 0 8px rgba(255, 82, 82, 0.3);
+}

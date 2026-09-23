@@ -1,0 +1,21 @@
+{
+  "name": "rezel",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.15.1",
+  "scripts": {
+    "dev": "pnpm --filter desktop dev",
+    "build": "pnpm --filter desktop build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "test": "pnpm --filter desktop test",
+    "test:unit": "pnpm --filter desktop test:unit",
+    "test:regression": "pnpm --filter desktop test:regression",
+    "test:phases": "pnpm --filter desktop test:phases",
+    "test:live": "pnpm --filter desktop test:live",
+    "test:all": "pnpm --filter desktop test:all"
+  },
+  "dependencies": {
+    "puppeteer": "^25.8.0"
+  }
+}

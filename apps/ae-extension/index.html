@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Rezel Automation Bridge</title>
+  <style>
+    body { font-family: sans-serif; background: #232323; color: #e0e0e0; margin: 10px; }
+    h3 { font-size: 14px; margin-bottom: 5px; }
+    #status { font-size: 12px; color: #a0a0a0; margin-bottom: 15px; }
+    #log { font-family: monospace; font-size: 10px; background: #1a1a1a; padding: 5px; height: 100px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <h3>Rezel AE Bridge</h3>
+  <div id="status">Status: Initializing...</div>
+  <div id="log"></div>
+
+  <!-- We load main.js which has node integration enabled -->
+  <script src="./js/main.js"></script>
+</body>
+</html>

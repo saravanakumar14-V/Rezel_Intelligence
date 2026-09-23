@@ -45,6 +45,8 @@ class LocalMemoryImpl {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
+  private loadPromise: Promise<void> | null = null;
+
   /**
    * load
    * Reads the memory file from the Tauri app data directory.
@@ -52,25 +54,36 @@ class LocalMemoryImpl {
    */
   async load(forceReload = false): Promise<void> {
     if (this.loaded && !forceReload) return;
+    if (this.loadPromise && !forceReload) return this.loadPromise;
 
-    try {
-      const raw = await invoke<string>('read_app_file', { path: MEMORY_FILE });
-      const parsed = JSON.parse(raw) as MemoryStore;
+    this.loadPromise = (async () => {
+      try {
+        const raw = await invoke<string>('read_app_file', { path: MEMORY_FILE });
+        const parsed = JSON.parse(raw) as MemoryStore;
 
-      // Version migration point — currently only v1
-      if (parsed.version === STORE_VERSION) {
-        this.store = parsed;
-      } else {
-        console.warn('[LocalMemory] Unknown store version, starting fresh');
-        this.store = emptyStore();
+        // Version migration point — currently only v1
+        if (parsed.version === STORE_VERSION) {
+          this.store = parsed;
+        } else {
+          console.warn('[LocalMemory] Unknown store version, starting fresh');
+          this.store = emptyStore();
+        }
+      } catch (err) {
+        const msg = String(err).toLowerCase();
+        // File doesn't exist yet — start fresh
+        if (msg.includes('not found') || msg.includes('no such file') || msg.includes('cannot find the file')) {
+          this.store = emptyStore();
+        } else {
+          console.error('[LocalMemory] Failed to load memory file:', err);
+          return; // Do not mark as successfully loaded or allow save to overwrite
+        }
       }
-    } catch {
-      // File doesn't exist yet or is corrupt — start fresh
-      this.store = emptyStore();
-    }
 
-    this.loaded = true;
-    this.dirty = false;
+      this.loaded = true;
+      this.dirty = false;
+    })();
+
+    return this.loadPromise;
   }
 
   /**
@@ -81,11 +94,12 @@ class LocalMemoryImpl {
   async save(): Promise<void> {
     if (!this.dirty) return;
 
+    this.dirty = false; // Reset before async IPC to avoid race conditions
     try {
       const json = JSON.stringify(this.store, null, 2);
       await invoke('write_app_file', { path: MEMORY_FILE, content: json });
-      this.dirty = false;
     } catch (err) {
+      this.dirty = true; // Re-flag on error
       console.error('[LocalMemory] Save failed:', err);
     }
   }

@@ -1,0 +1,177 @@
+﻿.deckRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 380px;
+  max-width: 92vw;
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.90));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 24px rgba(0, 229, 255, 0.10);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  padding-bottom: 8px;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #EAFBFF;
+  text-transform: uppercase;
+}
+
+.profilePill {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+/* ── Orbital Constellation Grid ─────────────────────────────────────────── */
+
+.constellationGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.nodeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.nodeCardActive {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.nodeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #7ECFFF;
+}
+
+.nodeDotActive {
+  background: #00E676;
+  box-shadow: 0 0 8px #00E676;
+}
+
+.nodeName {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  color: #EAFBFF;
+  white-space: nowrap;
+}
+
+.nodeState {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  color: rgba(126, 207, 255, 0.6);
+  text-transform: uppercase;
+}
+
+/* ── Active Routing Decision Card ───────────────────────────────────────── */
+
+.routingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(10, 16, 38, 0.6);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.routingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activeModelTitle {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #EAFBFF;
+}
+
+.localityBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 230, 118, 0.12);
+  color: #00E676;
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.localityBadgeCloud {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+.factorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 2px;
+}
+
+.factorItem {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: rgba(234, 251, 255, 0.75);
+}
+
+/* ── Failover Alert Strip ────────────────────────────────────────────────── */
+
+.failoverStrip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.3);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: #FF9F1C;
+}

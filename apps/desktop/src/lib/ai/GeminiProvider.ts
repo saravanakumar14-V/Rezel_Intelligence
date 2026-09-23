@@ -26,7 +26,7 @@ import type {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
-const DEFAULT_MODEL   = 'gemini-2.0-flash';
+const DEFAULT_MODEL   = (import.meta.env?.VITE_GEMINI_MODEL_ID) || 'gemini-3.6-flash';
 const MAX_RETRIES     = 3;
 const RETRY_BASE_MS   = 800;
 
@@ -47,7 +47,12 @@ Behaviour guidelines:
 
 interface GeminiPart {
   text?: string;
-  functionCall?: { name: string; args: Record<string, unknown> };
+  functionCall?: { 
+    name: string; 
+    args: Record<string, unknown>;
+    thought_signature?: string;
+  };
+  thought_signature?: string; // Sibling fallback
   functionResponse?: { name: string; response: { result: string } };
 }
 
@@ -81,7 +86,16 @@ function toGeminiContents(messages: Message[]): GeminiContent[] {
       if (msg.content) parts.push({ text: msg.content });
       if (msg.toolCalls) {
         for (const tc of msg.toolCalls) {
-          parts.push({ functionCall: { name: tc.name, args: tc.args } });
+          if (tc.rawPart) {
+            parts.push(tc.rawPart as GeminiPart);
+          } else {
+            // Fallback for older messages without rawPart
+            const functionCall: any = { name: tc.name, args: tc.args };
+            if (tc.thoughtSignature) {
+              functionCall.thought_signature = tc.thoughtSignature;
+            }
+            parts.push({ functionCall, thought_signature: tc.thoughtSignature });
+          }
         }
       }
       if (parts.length > 0) contents.push({ role: 'model', parts });
@@ -104,6 +118,7 @@ function toGeminiContents(messages: Message[]): GeminiContent[] {
 async function fetchWithRetry(
   url: string,
   init: RequestInit,
+  apiKey: string,
   retries: number = MAX_RETRIES
 ): Promise<Response> {
   let lastError: Error | null = null;
@@ -111,13 +126,52 @@ async function fetchWithRetry(
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, init);
+      
       if (response.ok || response.status === 400) return response; // 400 = invalid request, don't retry
+
+      if (response.status === 429) {
+        const cloned = response.clone();
+        const errText = await cloned.text();
+        
+        // Detect Daily Free-Tier Exhaustion
+        if (errText.includes('GenerateRequestsPerDay') || errText.includes('FreeTier')) {
+          throw new Error('Gemini daily API quota exhausted for this project. Please try again after the quota resets or configure another Gemini API project/key.');
+        }
+
+        // Otherwise, it's a temporary rate limit (e.g., per-minute).
+        const safeErrText = errText.split(apiKey).join('***[API_KEY_HIDDEN]***');
+        lastError = new Error(`Gemini API 429 Rate Limit: ${safeErrText}`);
+
+        if (attempt < retries - 1) {
+          const retryAfter = response.headers.get('Retry-After');
+          const delayMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : RETRY_BASE_MS * Math.pow(2, attempt);
+          await new Promise((r) => setTimeout(r, delayMs));
+          continue;
+        }
+        throw lastError;
+      }
+
+      if (response.status === 404) {
+        const modelMatch = url.match(/\/models\/([^:]+):/);
+        const modelName = modelMatch ? modelMatch[1] : 'unknown';
+        throw new Error(`Gemini API 404 Not Found: The configured model '${modelName}' is unavailable or deprecated. Please update VITE_GEMINI_MODEL_ID in your configuration.`);
+      }
+
       if (response.status >= 500) {
         lastError = new Error(`Gemini API ${response.status}: ${response.statusText}`);
       } else {
-        return response; // 4xx (non-400) — return as-is
+        return response; // 4xx (non-400, non-429) — return as-is
       }
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw err; // Fast-fail immediately on user abort
+      }
+      if (err instanceof Error && err.message.includes('daily API quota exhausted')) {
+        throw err; // Fast-fail immediately on daily quota exhaustion
+      }
+      if (err instanceof Error && err.message.includes('404 Not Found')) {
+        throw err; // Fast-fail immediately on unavailable model
+      }
       lastError = err instanceof Error ? err : new Error(String(err));
     }
 
@@ -142,6 +196,14 @@ class GeminiProviderImpl implements AIProvider {
   }
 
   /**
+   * clearApiKey
+   * Clears the cached API key so it is forced to re-fetch on the next request.
+   */
+  clearApiKey(): void {
+    this.apiKey = null;
+  }
+
+  /**
    * isAvailable
    * Checks if an API key is stored in the OS keyring.
    */
@@ -160,11 +222,14 @@ class GeminiProviderImpl implements AIProvider {
    * Loads the API key from keyring if not already cached.
    */
   private async ensureApiKey(): Promise<string> {
-    if (this.apiKey) return this.apiKey;
+    if (this.apiKey) {
+      return this.apiKey;
+    }
     try {
       this.apiKey = await invoke<string>('get_api_key');
       return this.apiKey;
-    } catch {
+    } catch (err) {
+      console.error("[GeminiProvider] ensureApiKey: get_api_key failed with:", err);
       throw new Error(
         'No Gemini API key configured. Use the settings panel or ' +
         'ToolExecutor to save one via save_api_key.'
@@ -186,7 +251,7 @@ class GeminiProviderImpl implements AIProvider {
     options: ChatOptions = {}
   ): AsyncGenerator<StreamChunk> {
     const apiKey = await this.ensureApiKey();
-    const url = `${GEMINI_BASE_URL}/models/${this.model}:streamGenerateContent?key=${apiKey}&alt=sse`;
+    const url = `${GEMINI_BASE_URL}/models/${this.model}:streamGenerateContent?alt=sse`;
 
     const systemPrompt = options.systemPrompt ?? DEFAULT_SYSTEM_PROMPT;
     const contents = toGeminiContents(messages);
@@ -202,21 +267,38 @@ class GeminiProviderImpl implements AIProvider {
 
     // Attach tools for function calling
     if (options.tools && options.tools.length > 0) {
-      const { ToolRegistry } = await import('./ToolRegistry');
+      const { CapabilityRegistry } = await import('./capabilities/CapabilityRegistry');
+      const functionDeclarations = CapabilityRegistry.toGeminiFunctionDeclarations();
       body.tools = [{
-        functionDeclarations: ToolRegistry.toGeminiFunctionDeclarations(),
+        functionDeclarations,
       }];
     }
 
-    const response = await fetchWithRetry(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: options.signal,
-    });
+    let response: Response;
+    try {
+      response = await fetchWithRetry(
+        url,
+        {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(body),
+          signal: options.signal,
+        },
+        apiKey
+      );
+    } catch (err) {
+      yield { type: 'error', error: err instanceof Error ? err.message : String(err) };
+      return;
+    }
 
     if (!response.ok) {
-      const errText = await response.text();
+      let errText = await response.text();
+      if (apiKey) {
+        errText = errText.split(apiKey).join('***[API_KEY_HIDDEN]***');
+      }
       yield { type: 'error', error: `Gemini API error (${response.status}): ${errText}` };
       return;
     }
@@ -276,6 +358,8 @@ class GeminiProviderImpl implements AIProvider {
                   id: crypto.randomUUID(),
                   name: part.functionCall.name,
                   args: part.functionCall.args,
+                  thoughtSignature: (part.functionCall as any).thought_signature || (part as any).thought_signature,
+                  rawPart: part,
                 },
               };
             }

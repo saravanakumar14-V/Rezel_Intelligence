@@ -1,0 +1,99 @@
+/**
+ * Rezel OS — Glass Surface & Theme Tokens
+ * Single source of truth from DESIGN.md
+ */
+
+:root {
+  /* ── Glass Surface Properties ─────────────────────────────────────────── */
+  --rz-glass-blur: 16px;
+  --rz-glass-saturation: 180%;
+  --rz-glass-border-opacity: 0.18;
+  --rz-glass-surface-opacity: 0.80;
+
+  --rz-glass-backdrop: blur(var(--rz-glass-blur)) saturate(var(--rz-glass-saturation));
+  --rz-glass-backdrop-subtle: blur(10px) saturate(140%);
+
+  /* ── Shadows & Elevation ───────────────────────────────────────────────── */
+  --rz-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --rz-glass-shadow-elevated: 0 16px 48px 0 rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(0, 229, 255, 0.20);
+  --rz-glass-shadow-glow-cyan: 0 0 24px rgba(0, 229, 255, 0.25), inset 0 0 0 1px rgba(0, 229, 255, 0.30);
+  --rz-glass-shadow-glow-purple: 0 0 24px rgba(179, 136, 255, 0.25), inset 0 0 0 1px rgba(179, 136, 255, 0.30);
+
+  /* ── Spacing Tokens (Standard Spatial Scale) ───────────────────────────── */
+  --rz-space-xs: 4px;
+  --rz-space-sm: 8px;
+  --rz-space-md: 16px;
+  --rz-space-lg: 24px;
+  --rz-space-xl: 32px;
+  --rz-space-2xl: 48px;
+  --rz-space-3xl: 64px;
+
+  --rz-space-1: 4px;
+  --rz-space-2: 8px;
+  --rz-space-3: 12px;
+  --rz-space-4: 16px;
+  --rz-space-5: 20px;
+  --rz-space-6: 24px;
+  --rz-space-8: 32px;
+  --rz-space-10: 40px;
+  --rz-space-12: 48px;
+
+  /* ── Quiet Luxury Glass Properties ─────────────────────────────────────── */
+  --rz-surface-charcoal: rgba(5, 9, 22, 0.86);
+  --rz-surface-charcoal-elevated: rgba(7, 13, 30, 0.94);
+  --rz-edge-subtle-glow: 0 0 16px rgba(0, 229, 255, 0.18);
+
+  /* ── Dedicated R7 Navigation Tokens (Isolated Scope) ─────────────────────── */
+  --rz-r7-surface: rgba(5, 9, 22, 0.86);
+  --rz-r7-surface-elevated: rgba(7, 13, 30, 0.94);
+  --rz-r7-surface-border: rgba(0, 229, 255, 0.18);
+  --rz-r7-spectral-intensity: 0.85;
+  --rz-r7-glow-strength: 0.18;
+  --rz-r7-text-accent: #00E5FF;
+  --rz-r7-core-resonance: rgba(0, 229, 255, 0.16);
+
+  /* ── Z-Index Scale ──────────────────────────────────────────────────────── */
+  --rz-z-back: -10;
+  --rz-z-base: 0;
+  --rz-z-scene: 1;
+  --rz-z-hud: 10;
+  --rz-z-panel: 20;
+  --rz-z-command: 30;
+  --rz-z-modal: 50;
+  --rz-z-tooltip: 100;
+}
+
+/* Reusable Glassmorphism Utility Classes */
+.rz-glass-panel {
+  background: var(--rz-bg-glass-primary);
+  backdrop-filter: var(--rz-glass-backdrop);
+  -webkit-backdrop-filter: var(--rz-glass-backdrop);
+  border: var(--rz-border-hairline);
+  border-radius: var(--rz-radius-xl);
+  box-shadow: var(--rz-glass-shadow);
+}
+
+.rz-glass-elevated {
+  background: var(--rz-bg-glass-elevated);
+  backdrop-filter: var(--rz-glass-backdrop);
+  -webkit-backdrop-filter: var(--rz-glass-backdrop);
+  border: var(--rz-border-focus);
+  border-radius: var(--rz-radius-xl);
+  box-shadow: var(--rz-glass-shadow-elevated);
+}
+
+.rz-glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: var(--rz-glass-backdrop-subtle);
+  -webkit-backdrop-filter: var(--rz-glass-backdrop-subtle);
+  border: var(--rz-border-subtle);
+  border-radius: var(--rz-radius-lg);
+}
+
+.rz-glass-pill {
+  background: rgba(6, 11, 30, 0.60);
+  backdrop-filter: var(--rz-glass-backdrop-subtle);
+  -webkit-backdrop-filter: var(--rz-glass-backdrop-subtle);
+  border: var(--rz-border-hairline);
+  border-radius: var(--rz-radius-full);
+}

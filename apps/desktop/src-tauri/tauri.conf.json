@@ -1,10 +1,10 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Rezel",
-  "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "version": "1.0.0",
+  "identifier": "com.rezel.desktop",
   "build": {
-    "frontendDist": ".../dist",
+    "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build"
@@ -12,20 +12,22 @@
   "app": {
     "windows": [
       {
-        "title": "REZEL",
-        "width": 800,
-        "height": 600,
+        "title": "REZEL — Intelligence Operating Environment",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 640,
         "resizable": true,
         "fullscreen": false
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: blob:; connect-src 'self' ws://127.0.0.1:* http://127.0.0.1:* https://*.googleapis.com https://*.anthropic.com https://*.openai.com; font-src 'self' data:;"
     }
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["nsis", "msi"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -33,8 +35,24 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "android": {
-      "debugApplicationIdSuffix": ".debug"
-    }
+    "resources": [
+      "resources/**/*"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false,
+        "languages": ["English"]
+      },
+      "wix": {
+        "language": "en-US"
+      }
+    },
+    "shortDescription": "Rezel Intelligence Operating Environment for Creative Automation",
+    "longDescription": "Autonomous, deterministic creative pipeline automation across 3D, VFX, and native creative tools with mathematically bounded execution safety.",
+    "copyright": "Copyright © 2026 Rezel Intelligence Inc. All rights reserved."
   }
 }

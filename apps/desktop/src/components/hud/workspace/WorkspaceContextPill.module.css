@@ -1,0 +1,60 @@
+﻿.pillContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.contextPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(4, 14, 28, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: #EAFBFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.contextPill:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #FFFFFF;
+}
+
+.contextPill:focus-visible {
+  outline: 2px solid #00E5FF;
+}
+
+.pillAttention {
+  border-color: rgba(255, 159, 28, 0.5);
+  background: rgba(255, 159, 28, 0.12);
+  color: #FF9F1C;
+  animation: pulseAttention 2s infinite ease-in-out;
+}
+
+@keyframes pulseAttention {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(255, 159, 28, 0);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255, 159, 28, 0.35);
+  }
+}
+
+.statusIcon {
+  color: #00E5FF;
+}
+
+.progressText {
+  color: #00E676;
+  font-weight: 700;
+}

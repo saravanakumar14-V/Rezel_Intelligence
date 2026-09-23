@@ -1,0 +1,110 @@
+.personalizationRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* ── Hero Identity Card ─────────────────────────────────────────── */
+.heroIdentityCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(14, 10, 40, 0.8);
+  border: 1px solid rgba(179, 136, 255, 0.35);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(179, 136, 255, 0.1);
+}
+
+.heroHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heroTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #B388FF;
+  text-transform: uppercase;
+}
+
+.identityDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #B388FF;
+  box-shadow: 0 0 8px #B388FF;
+}
+
+.heroStatusText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: #EAFBFF;
+}
+
+.heroDescription {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  color: rgba(230, 215, 255, 0.85);
+  line-height: 1.45;
+}
+
+.heroMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: rgba(179, 136, 255, 0.7);
+}
+
+/* ── Mode Switcher Tabs ─────────────────────────────────────────── */
+.modeTabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6px;
+  overflow-x: auto;
+}
+
+.modeTab {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.modeTab:hover {
+  color: #B388FF;
+  border-color: rgba(179, 136, 255, 0.3);
+}
+
+.modeTabActive {
+  background: rgba(179, 136, 255, 0.18);
+  color: #B388FF;
+  border-color: rgba(179, 136, 255, 0.45);
+  box-shadow: 0 0 10px rgba(179, 136, 255, 0.15);
+}

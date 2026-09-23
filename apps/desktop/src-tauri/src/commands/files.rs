@@ -1,6 +1,6 @@
+use log::info;
 use std::fs;
 use std::path::{Path, PathBuf};
-use log::info;
 use tauri::Manager;
 
 /// Resolves and validates a relative path within the app data directory.
@@ -16,14 +16,15 @@ fn resolve_safe_path(app: &tauri::AppHandle, relative: &str) -> Result<PathBuf, 
         return Err("Path cannot be empty.".into());
     }
 
-    // Reject absolute paths and traversal patterns
-    let normalized = relative.replace('\\', "/");
-    if normalized.starts_with('/') || normalized.contains("..") {
+    let path_obj = Path::new(relative);
+    if path_obj.is_absolute() || relative.contains("..") {
         return Err(format!(
             "[Rezel] Path '{}' rejected: absolute paths and '..' traversal are not allowed.",
             relative
         ));
     }
+
+    let normalized = relative.replace('\\', "/");
 
     let data_dir = app
         .path()
@@ -61,6 +62,19 @@ fn resolve_safe_path(app: &tauri::AppHandle, relative: &str) -> Result<PathBuf, 
         ));
     }
 
+    // If target already exists, verify its canonical path is also in the sandbox (prevents symlink bypass)
+    if target.exists() {
+        let canonical_target = target
+            .canonicalize()
+            .map_err(|e| format!("Failed to canonicalize target: {}", e))?;
+        if !canonical_target.starts_with(&canonical_sandbox) {
+            return Err(format!(
+                "[Rezel] Target '{}' escapes the sandbox directory via symlink.",
+                relative
+            ));
+        }
+    }
+
     Ok(target)
 }
 
@@ -78,8 +92,7 @@ pub fn read_app_file(app: tauri::AppHandle, path: String) -> Result<String, Stri
 
     info!("[files] read: {}", target.display());
 
-    fs::read_to_string(&target)
-        .map_err(|e| format!("Failed to read '{}': {}", path, e))
+    fs::read_to_string(&target).map_err(|e| format!("Failed to read '{}': {}", path, e))
 }
 
 /// write_app_file
@@ -93,24 +106,31 @@ pub fn read_app_file(app: tauri::AppHandle, path: String) -> Result<String, Stri
 pub fn write_app_file(app: tauri::AppHandle, path: String, content: String) -> Result<(), String> {
     let target = resolve_safe_path(&app, &path)?;
 
-    info!("[files] write: {} ({} bytes)", target.display(), content.len());
-
-    // Ensure parent directory exists
-    if let Some(parent) = target.parent() {
-        fs::create_dir_all(parent)
-            .map_err(|e| format!("Failed to create directories for '{}': {}", path, e))?;
-    }
+    info!(
+        "[files] write: {} ({} bytes)",
+        target.display(),
+        content.len()
+    );
 
     // Atomic write: temp file → rename
-    let tmp_path = target.with_extension("tmp");
+    let timestamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis();
+    let tmp_path = PathBuf::from(format!("{}.{}.tmp", target.display(), timestamp));
 
     fs::write(&tmp_path, &content)
         .map_err(|e| format!("Failed to write temp file for '{}': {}", path, e))?;
 
-    fs::rename(&tmp_path, &target)
-        .map_err(|e| {
-            // Clean up temp file on rename failure
-            let _ = fs::remove_file(&tmp_path);
-            format!("Failed to finalize write for '{}': {}", path, e)
-        })
+    fs::rename(&tmp_path, &target).map_err(|e| {
+        // Clean up temp file on rename failure
+        if let Err(cleanup_err) = fs::remove_file(&tmp_path) {
+            log::error!(
+                "Failed to clean up temp file {}: {}",
+                tmp_path.display(),
+                cleanup_err
+            );
+        }
+        format!("Failed to finalize write for '{}': {}", path, e)
+    })
 }

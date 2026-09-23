@@ -1,0 +1,98 @@
+/**
+ * Rezel OS — Color & State Tokens
+ * Single source of truth from DESIGN.md
+ */
+
+:root {
+  /* ── Background & Canvas Surfaces ─────────────────────────────────────── */
+  --rz-bg-space-void: #02030A;
+  --rz-bg-space-void-rgb: 2, 3, 10;
+  --rz-bg-glass-primary: rgba(6, 11, 30, 0.80);
+  --rz-bg-glass-primary-rgb: 6, 11, 30;
+  --rz-bg-glass-elevated: rgba(13, 21, 54, 0.90);
+  --rz-bg-glass-elevated-rgb: 13, 21, 54;
+  --rz-bg-surface-subtle: rgba(255, 255, 255, 0.03);
+
+  /* ── Brand & Experience Accents (Quiet Luxury Spectral Tones) ─────────── */
+  --rz-accent-cyan-core: #00E5FF;
+  --rz-accent-cyan-core-rgb: 0, 229, 255;
+  --rz-accent-ice-blue: #7ECFFF;
+  --rz-accent-ice-blue-rgb: 126, 207, 255;
+  --rz-accent-creator-purple: #B388FF;
+  --rz-accent-creator-purple-rgb: 179, 136, 255;
+  --rz-accent-dev-emerald: #00E676;
+  --rz-accent-dev-emerald-rgb: 0, 230, 118;
+  --rz-accent-amber: #FFB300;
+  --rz-accent-amber-rgb: 255, 179, 0;
+  --rz-accent-indigo: #7A5CFF;
+  --rz-accent-indigo-rgb: 122, 92, 255;
+  --rz-accent-violet: #9D4EDD;
+  --rz-accent-violet-rgb: 157, 78, 221;
+
+  /* ── State & Assertion Colors ──────────────────────────────────────────── */
+  --rz-state-success-verified: #00E676;
+  --rz-state-success-verified-rgb: 0, 230, 118;
+  --rz-state-warning-unknown: #FFD700;
+  --rz-state-warning-unknown-rgb: 255, 215, 0;
+  --rz-state-danger-error: #FF5252;
+  --rz-state-danger-error-rgb: 255, 82, 82;
+
+  /* ── Borders & Outlines ────────────────────────────────────────────────── */
+  --rz-border-hairline: 1px solid rgba(0, 229, 255, 0.18);
+  --rz-border-subtle: 1px solid rgba(255, 255, 255, 0.08);
+  --rz-border-color-hairline: rgba(0, 229, 255, 0.18);
+  --rz-border-color-subtle: rgba(255, 255, 255, 0.08);
+  --rz-border-color-focus: rgba(0, 229, 255, 0.50);
+
+  /* ── Text & Content Luminance ──────────────────────────────────────────── */
+  --rz-text-primary: #EAFBFF;
+  --rz-text-secondary: #7ECFFF;
+  --rz-text-muted: rgba(234, 251, 255, 0.55);
+  --rz-text-subtle: rgba(255, 255, 255, 0.35);
+  --rz-text-inverse: #02030A;
+
+  /* ── Radii ─────────────────────────────────────────────────────────────── */
+  --rz-radius-xs: 2px;
+  --rz-radius-sm: 4px;
+  --rz-radius-md: 6px;
+  --rz-radius-lg: 8px;
+  --rz-radius-xl: 12px;
+  --rz-radius-2xl: 16px;
+  --rz-radius-full: 9999px;
+
+  /* ── Voice State Visual Tokens ─────────────────────────────────────────── */
+  --rz-voice-idle-color: #00E5FF;
+  --rz-voice-idle-glow: rgba(0, 229, 255, 0.35);
+  --rz-voice-listening-color: #7ECFFF;
+  --rz-voice-listening-glow: rgba(126, 207, 255, 0.50);
+  --rz-voice-thinking-color: #00B0FF;
+  --rz-voice-thinking-glow: rgba(0, 176, 255, 0.65);
+  --rz-voice-speaking-color: #00E5FF;
+  --rz-voice-speaking-glow: rgba(0, 229, 255, 0.70);
+  --rz-voice-interrupted-color: #FF5252;
+  --rz-voice-interrupted-glow: rgba(255, 82, 82, 0.60);
+
+  /* ── Workflow State Tokens ─────────────────────────────────────────────── */
+  --rz-workflow-running: #00E5FF;
+  --rz-workflow-running-bg: rgba(0, 229, 255, 0.12);
+  --rz-workflow-verified: #00E676;
+  --rz-workflow-verified-bg: rgba(0, 230, 118, 0.12);
+  --rz-workflow-not-verified: #FFD700;
+  --rz-workflow-not-verified-bg: rgba(255, 215, 0, 0.12);
+  --rz-workflow-unknown: #FFA000;
+  --rz-workflow-unknown-bg: rgba(255, 160, 0, 0.12);
+  --rz-workflow-failed: #FF5252;
+  --rz-workflow-failed-bg: rgba(255, 82, 82, 0.15);
+  --rz-workflow-recovery: #E040FB;
+  --rz-workflow-recovery-bg: rgba(224, 64, 251, 0.15);
+
+  /* ── Backward Compatibility Aliases ────────────────────────────────────── */
+  --bg: var(--rz-bg-space-void);
+  --surface: var(--rz-bg-glass-primary);
+  --primary: var(--rz-accent-cyan-core);
+  --secondary: var(--rz-accent-creator-purple);
+  --success: var(--rz-state-success-verified);
+  --danger: var(--rz-state-danger-error);
+  --warning: var(--rz-state-warning-unknown);
+  --text: var(--rz-text-primary);
+}

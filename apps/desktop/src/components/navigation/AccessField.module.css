@@ -1,0 +1,560 @@
+/**
+ * REZEL R7.3 — COGNITIVE FIELD Stylesheet (Quiet Luxury & Production Discipline)
+ * Strict Event Isolation + Spawned Spatial Surface Lineage + Disciplined Geometry.
+ */
+
+.cognitiveFieldOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 48px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(4, 9, 22, 0.65) 0%,
+    rgba(2, 5, 14, 0.92) 55%,
+    rgba(1, 2, 8, 0.99) 100%
+  );
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  transform: scale(1.02);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.35s ease;
+  overflow: hidden;
+  user-select: none;
+}
+
+.cognitiveFieldActive {
+  visibility: visible !important;
+  pointer-events: auto !important;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Quieted background state when spatial surfaces are spawned */
+.cognitiveFieldSurfaceActive {
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(3, 7, 18, 0.75) 0%,
+    rgba(2, 4, 12, 0.95) 55%,
+    rgba(1, 2, 6, 0.99) 100%
+  );
+}
+
+/* ── Phase 2: Staged Spatial Pulse Wave (Zero Hitbox) ──────────────────── */
+
+.spatialPulseWave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+  pointer-events: none !important;
+  z-index: 5;
+  opacity: 0;
+}
+
+.spatialPulseWaveActive {
+  animation: spatialPulseOutward 1s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes spatialPulseOutward {
+  0% {
+    width: 60px;
+    height: 60px;
+    opacity: 0.8;
+    border-color: #FFF4D6;
+  }
+  50% {
+    opacity: 0.35;
+    border-color: #00E5FF;
+  }
+  100% {
+    width: 160vw;
+    height: 160vw;
+    opacity: 0;
+    border-color: #7A5CFF;
+  }
+}
+
+/* ── Layer 1 & 2: Volumetric Atmosphere & Magnetic Streamlines ──────────── */
+
+.fluidAtmosphereCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none !important;
+  overflow: visible;
+  z-index: 2;
+}
+
+.atmosphericStream {
+  fill: none;
+  stroke: rgba(0, 229, 255, 0.08);
+  stroke-width: 1;
+  stroke-dasharray: 6 18;
+  transition: stroke 0.4s ease, opacity 0.4s ease;
+  pointer-events: none !important;
+}
+
+.activeStreamResonance {
+  stroke: rgba(0, 229, 255, 0.35);
+  stroke-width: 1.8;
+  stroke-dasharray: 10 10;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.4));
+  animation: atmosphericFlow 2.5s linear infinite;
+  pointer-events: none !important;
+}
+
+@keyframes atmosphericFlow {
+  from { stroke-dashoffset: 40; }
+  to { stroke-dashoffset: 0; }
+}
+
+.directionalExecutionCurrent {
+  fill: none;
+  stroke: rgba(0, 230, 118, 0.35);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 16;
+  filter: drop-shadow(0 0 6px rgba(0, 230, 118, 0.3));
+  animation: atmosphericFlow 2s linear infinite;
+  pointer-events: none !important;
+}
+
+/* ── Central Atmospheric Halo around Mini QuantumCore ─────────────────── */
+
+.coreAtmosphericAura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  pointer-events: none !important;
+  filter: blur(60px);
+  opacity: 0.45;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.auraIdle {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.15) 0%, rgba(122, 92, 255, 0.03) 50%, transparent 70%);
+}
+
+.auraCreate {
+  background: radial-gradient(circle, rgba(255, 179, 0, 0.25) 0%, rgba(0, 229, 255, 0.05) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.75;
+}
+
+.auraConverse {
+  background: radial-gradient(circle, rgba(126, 207, 255, 0.25) 0%, rgba(179, 136, 255, 0.06) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.75;
+}
+
+.auraAutomate {
+  background: radial-gradient(circle, rgba(0, 230, 118, 0.24) 0%, rgba(0, 229, 255, 0.06) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.75;
+}
+
+.auraAnalyze {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 176, 255, 0.08) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.75;
+}
+
+.auraInspect {
+  background: radial-gradient(circle, rgba(157, 78, 221, 0.22) 0%, rgba(0, 229, 255, 0.05) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.72;
+}
+
+.auraControl {
+  background: radial-gradient(circle, rgba(122, 92, 255, 0.24) 0%, rgba(255, 179, 0, 0.04) 55%, transparent 75%);
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 0.75;
+}
+
+/* ── Minimalist Spatial Header ─────────────────────────────────────────── */
+
+.fieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  z-index: 35;
+  pointer-events: auto;
+}
+
+.fieldTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--rz-space-md, 16px);
+  pointer-events: none;
+}
+
+.fieldBreathDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  animation: breathPulse 4s ease-in-out infinite;
+}
+
+@keyframes breathPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.95; }
+}
+
+.fieldTitle {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--rz-text-primary, #EAFBFF);
+  text-transform: uppercase;
+}
+
+.fieldSubtext {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.dismissButton {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 6px 16px;
+  border-radius: var(--rz-radius-md, 6px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  pointer-events: auto;
+}
+
+.dismissButton:hover,
+.dismissButton:focus-visible {
+  background: rgba(255, 82, 82, 0.14);
+  border-color: rgba(255, 82, 82, 0.4);
+  color: #FF7070;
+  box-shadow: 0 0 12px rgba(255, 82, 82, 0.25);
+}
+
+/* ── First-Use Contextual Discovery Hint ────────────────────────────────── */
+
+.firstUseHintBox {
+  position: absolute;
+  top: calc(50% - 118px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+  background: rgba(4, 10, 26, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6),
+              0 0 14px rgba(0, 229, 255, 0.12);
+  pointer-events: none;
+  animation: hintGentleFloat 4.5s ease-in-out infinite;
+  z-index: 15;
+}
+
+@keyframes hintGentleFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+
+.firstUseHintTitle {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: #FFFFFF;
+}
+
+.firstUseHintSub {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 10.5px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.8;
+}
+
+/* ── Cognitive Field Canvas (Underlying Anchor) ────────────────────────── */
+
+.cognitiveFieldCanvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+}
+
+.cognitiveFieldCanvasQuieted {
+  opacity: 0.65;
+  transform: scale(0.96) translateX(-60px);
+  filter: brightness(0.82) saturate(0.85);
+}
+
+/* ── Capability Control Object & Semantic Hit Target ───────────────────── */
+
+.capabilityControlObject {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rz-space-sm, 8px);
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s ease,
+              filter 0.3s ease;
+  outline: none;
+  opacity: 0.85;
+  animation: capabilityStaggerIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* Staggered emergence */
+.stagger0 { animation-delay: 0.06s; }
+.stagger1 { animation-delay: 0.12s; }
+.stagger2 { animation-delay: 0.18s; }
+.stagger3 { animation-delay: 0.24s; }
+.stagger4 { animation-delay: 0.30s; }
+.stagger5 { animation-delay: 0.36s; }
+
+@keyframes capabilityStaggerIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.88);
+  }
+  to {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Spatial Continuity: Unfocused capabilities remain visible at ~60% */
+.capabilityControlObjectDimmed {
+  opacity: 0.58;
+}
+
+/* Hover Stability: Subtle scale, zero positional shift */
+.capabilityControlObject:hover {
+  opacity: 0.98;
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.capabilityControlObjectFocused {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.06);
+  z-index: 22;
+}
+
+.capabilityControlObjectActiveLineage {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.05);
+  filter: drop-shadow(0 0 14px var(--cap-glow, rgba(0, 229, 255, 0.35)));
+  z-index: 21;
+}
+
+/* 3D Hero Visual Container: Consistent 92px circle */
+.heroVisualContainer {
+  position: relative;
+  width: clamp(82px, 7.5vw, 98px);
+  height: clamp(82px, 7.5vw, 98px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(circle, rgba(10, 22, 48, 0.95) 0%, rgba(2, 5, 14, 0.98) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8),
+              0 0 14px var(--cap-glow, rgba(0, 229, 255, 0.18));
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.capabilityControlObject:hover .heroVisualContainer,
+.capabilityControlObjectFocused .heroVisualContainer,
+.capabilityControlObjectActiveLineage .heroVisualContainer {
+  border-color: var(--cap-primary, #00E5FF);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85),
+              0 0 20px var(--cap-glow, rgba(0, 229, 255, 0.4));
+  transform: scale(1.04);
+}
+
+.heroVisualImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: transform 0.35s ease;
+  pointer-events: none;
+}
+
+.capabilityControlObject:hover .heroVisualImg,
+.capabilityControlObjectFocused .heroVisualImg {
+  transform: scale(1.06);
+}
+
+/* ── 4-Level Information Stack (Disciplined Internal Rhythm) ──────────── */
+
+.capabilityInfoStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+/* 1. Primary Capability Title: Display Font */
+.capabilityTitle {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: clamp(20px, 1.8vw, 25px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--rz-text-primary, #EAFBFF);
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  line-height: 1.1;
+}
+
+.capabilityControlObject:hover .capabilityTitle,
+.capabilityControlObjectFocused .capabilityTitle,
+.capabilityControlObjectActiveLineage .capabilityTitle {
+  color: var(--cap-primary, #00E5FF);
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 14px var(--cap-primary, #00E5FF);
+}
+
+/* 2. Technical Identity: Monospace */
+.capabilityIdentity {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: clamp(10px, 0.9vw, 11.5px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--cap-primary, #00E5FF);
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+/* 3. State Tag with Active Indicator Pip */
+.capabilityState {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.65;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.statePip {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.6;
+}
+
+.statePipActive {
+  background: var(--cap-primary, #00E5FF);
+  opacity: 1;
+  box-shadow: 0 0 6px var(--cap-primary, #00E5FF);
+}
+
+/* ── Minimalist Spatial Footer ─────────────────────────────────────────── */
+
+.fieldFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  z-index: 35;
+  pointer-events: none;
+}
+
+.fieldStatusIndicator {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.fieldHotkeyHints {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.65;
+  text-transform: uppercase;
+}
+
+/* ── Responsive Adaptations ────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .cognitiveFieldOverlay {
+    padding: 18px 20px;
+  }
+  .fieldSubtext {
+    display: none;
+  }
+  .cognitiveFieldCanvasQuieted {
+    transform: scale(0.92) translateX(-30px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activeStreamResonance,
+  .directionalExecutionCurrent,
+  .fieldBreathDot,
+  .spatialPulseWaveActive,
+  .firstUseHintBox {
+    animation: none !important;
+  }
+  .cognitiveFieldOverlay,
+  .capabilityControlObject,
+  .coreAtmosphericAura,
+  .cognitiveFieldCanvas {
+    transition: none !important;
+    transform: none !important;
+  }
+}

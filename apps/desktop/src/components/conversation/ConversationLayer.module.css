@@ -1,0 +1,205 @@
+.layerRoot {
+  position: absolute;
+  right: 28px;
+  width: 440px;
+  max-width: calc(100vw - 220px);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: var(--rz-z-conversation, 18);
+  user-select: text;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.layerCompact {
+  bottom: 96px;
+  top: auto;
+}
+
+.layerExpanded {
+  top: 56px;
+  bottom: 96px;
+}
+
+.compactCard {
+  width: 100%;
+  pointer-events: auto;
+  border-radius: var(--rz-radius-xl, 14px);
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.88));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  box-shadow: 0 16px 52px rgba(0, 0, 0, 0.85), 0 0 24px rgba(0, 229, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  max-height: 420px;
+}
+
+.expandedPanel {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  border-radius: var(--rz-radius-xl, 14px);
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.90));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  box-shadow: 0 20px 64px rgba(0, 0, 0, 0.9), 0 0 32px rgba(0, 229, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 10px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 8px var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.headerTitle {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--rz-radius-sm, 4px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--rz-text-secondary, #7ECFFF);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.3);
+  color: #FFFFFF;
+}
+
+.messagesList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.messageUser {
+  align-items: flex-end;
+}
+
+.messageAssistant {
+  align-items: flex-start;
+}
+
+.bubbleUser {
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 12px 12px 2px 12px;
+  padding: 8px 12px;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  line-height: 1.45;
+  max-width: 85%;
+}
+
+.bubbleAssistant {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px 12px 12px 2px;
+  padding: 8px 12px;
+  color: var(--rz-text-primary, #FFFFFF);
+  font-size: 12.5px;
+  line-height: 1.45;
+  max-width: 90%;
+}
+
+.streamingCursor {
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: cursorBlink 0.9s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.toolBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(179, 136, 255, 0.12);
+  border: 1px solid rgba(179, 136, 255, 0.3);
+  color: #D1C4E9;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+}
+
+/* ── Responsive Viewport Rules ────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .layerRoot {
+    right: 16px;
+    width: 380px;
+    max-width: calc(100vw - 64px);
+  }
+}
+
+@media (max-width: 768px) {
+  .layerRoot {
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: 100%;
+    bottom: 84px;
+  }
+}

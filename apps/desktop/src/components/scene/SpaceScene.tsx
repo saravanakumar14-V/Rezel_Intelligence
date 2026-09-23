@@ -1,79 +1,68 @@
 import { Suspense, memo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
-import CoreLight from "../core/CoreLight";
 import QuantumCore from "../core/QuantumCore";
 import StarsField from "./StarsField";
 import CameraController from "./CameraController";
+import SpatialNavigationOverlay from "./SpatialNavigationOverlay";
+import { useHardware } from "../../providers/HardwareProvider";
 
-/**
- * SpaceScene
- *
- * Root React Three Fiber canvas for the Rezel home screen.
- *
- * Composition order (back → front):
- *  1. StarsField     — background star sphere + space dust
- *  2. CoreLight      — scene lighting configuration
- *  3. QuantumCore    — central animated energy core
- *  4. CameraController — mouse-reactive parallax (renders nothing)
- *  5. EffectComposer — post-processing: bloom + vignette
- *
- * Canvas settings:
- *  - gl.antialias: true for clean geometry edges
- *  - gl.powerPreference: "high-performance" — request discrete GPU
- *  - dpr clamped to [1, 2] to avoid excessive pixel ratio on HiDPI
- *  - frameloop: "always" — continuous for smooth animation
- *
- * Performance requirements (per spec):
- *  - Target 60 FPS on mid-range hardware
- *  - No per-frame object allocations in sub-components
- *  - Geometry instancing used where particle count > 1
- *
- * Wrapped in React.memo() — this component receives no props and should
- * never re-render due to parent state changes (orbState, chat streaming, etc.).
- */
-const SpaceScene = memo(function SpaceScene() {
+function SceneEffects() {
+  const { quality } = useHardware();
+
+  // On low quality, we skip expensive post-processing bloom
+  if (quality === 'LOW') {
+    return null;
+  }
+
   return (
-    <Canvas
-      camera={{ position: [0, 0, 8], fov: 50, near: 0.1, far: 1000 }}
-      gl={{
-        antialias: true,
-        powerPreference: "high-performance",
-        alpha: false,
-      }}
-      dpr={[1, 2]}
-      frameloop="always"
-      style={{ position: "absolute", inset: 0 }}
-    >
-      {/* Deep space background colour */}
+    <EffectComposer>
+      <Bloom
+        intensity={quality === 'MED' ? 1.05 : 1.35}
+        luminanceThreshold={0.25}
+        luminanceSmoothing={0.80}
+        mipmapBlur={quality === 'HIGH' || quality === 'ULTRA'}
+      />
+      <Vignette offset={0.35} darkness={0.75} />
+    </EffectComposer>
+  );
+}
+
+function SceneContents() {
+  const { quality } = useHardware();
+  const starCount = quality === 'LOW' ? 2000 : quality === 'MED' ? 4000 : 7000;
+  const dustCount = quality === 'LOW' ? 100 : quality === 'MED' ? 200 : 400;
+
+  return (
+    <>
       <color attach="background" args={["#02030A"]} />
-
       <Suspense fallback={null}>
-        {/* Background star field + space dust */}
-        <StarsField starCount={7000} dustCount={400} radius={200} />
-
-        {/* Scene lighting */}
-        <CoreLight />
-
-        {/* Central Quantum Core */}
+        <StarsField starCount={starCount} dustCount={dustCount} radius={200} />
         <QuantumCore />
-
-        {/* Mouse-reactive parallax camera */}
         <CameraController />
       </Suspense>
+      <SceneEffects />
+    </>
+  );
+}
 
-      {/* Post-processing effects */}
-      <EffectComposer>
-        {/* Bloom — Cyan core glow halos */}
-        <Bloom
-          intensity={1.6}
-          luminanceThreshold={0.15}
-          luminanceSmoothing={0.85}
-          mipmapBlur
-        />
-        <Vignette offset={0.35} darkness={0.75} />
-      </EffectComposer>
-    </Canvas>
+const SpaceScene = memo(function SpaceScene() {
+  return (
+    <div className="absolute inset-0 overflow-hidden select-none">
+      <Canvas
+        camera={{ position: [0, 0, 8], fov: 50, near: 0.1, far: 1000 }}
+        gl={{
+          antialias: true,
+          powerPreference: "high-performance",
+          alpha: false,
+        }}
+        frameloop="always"
+        style={{ position: "absolute", inset: 0 }}
+      >
+        <SceneContents />
+      </Canvas>
+      <SpatialNavigationOverlay />
+    </div>
   );
 });
 

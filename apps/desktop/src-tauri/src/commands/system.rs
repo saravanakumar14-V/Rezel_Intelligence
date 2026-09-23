@@ -1,5 +1,5 @@
-use sysinfo::System;
 use std::sync::Mutex;
+use sysinfo::System;
 use tauri::State;
 
 pub struct SystemState {
@@ -15,10 +15,10 @@ pub struct SystemMetrics {
 
 #[tauri::command]
 pub fn get_system_info(state: State<'_, SystemState>) -> SystemMetrics {
-    let mut sys = state.sys.lock().unwrap();
+    let mut sys = state.sys.lock().unwrap_or_else(|e| e.into_inner());
     sys.refresh_cpu_usage();
     sys.refresh_memory();
-    
+
     // Average CPU usage across all cores
     let cpus = sys.cpus();
     let cpu_usage = if cpus.is_empty() {
@@ -26,7 +26,7 @@ pub fn get_system_info(state: State<'_, SystemState>) -> SystemMetrics {
     } else {
         cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
     };
-    
+
     SystemMetrics {
         cpu_usage,
         total_memory: sys.total_memory(),

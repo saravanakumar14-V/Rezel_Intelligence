@@ -6,8 +6,10 @@ import { Info, Zap } from 'lucide-react';
  * Displays application version, runtime environment, AI provider details,
  * and system architecture information for the Rezel desktop app.
  */
+import { isTauri } from '@tauri-apps/api/core';
+
 export default function AboutSection() {
-  const isDesktop = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+  const isDesktop = typeof window !== 'undefined' && isTauri();
   const buildMode = import.meta.env.MODE || 'development';
   const rawArch = typeof navigator !== 'undefined' ? (navigator.platform || navigator.userAgent || 'Unknown') : 'Unknown';
   const arch = rawArch.length > 22 ? `${rawArch.slice(0, 20)}...` : rawArch;

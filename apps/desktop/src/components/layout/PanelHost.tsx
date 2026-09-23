@@ -1,7 +1,7 @@
-import { Suspense, lazy } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+﻿import React, { Suspense, lazy } from 'react';
 import type { AppMode } from '../hud/ModeNav';
 import type { UseChatReturn } from '../../hooks/useChat';
+import { GsapPresence } from './GsapPresence';
 
 // ─── Lazy-loaded panels ───────────────────────────────────────────────────────
 
@@ -10,65 +10,60 @@ const AutoPanel       = lazy(() => import('../panels/AutoPanel'));
 const MemoryPanel     = lazy(() => import('../panels/MemoryPanel'));
 const SettingsPanel   = lazy(() => import('../panels/SettingsPanel'));
 
-// ─── Animation variants ──────────────────────────────────────────────────────
+// ─── Error Boundary ──────────────────────────────────────────────────────────
 
-const panelVariants = {
-  initial:  { opacity: 0, x: 32, filter: 'blur(4px)' },
-  animate:  { opacity: 1, x: 0,  filter: 'blur(0px)' },
-  exit:     { opacity: 0, x: 16, filter: 'blur(3px)' },
-};
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error?: Error}> {
+  constructor(props: any) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="absolute top-8 right-8 w-[420px] bg-red-900/40 p-4 border border-red-500/50 rounded-xl text-red-200 pointer-events-auto">
+          Failed to load panel: {this.state.error?.message}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
-const panelTransition = {
-  duration: 0.3,
-  ease: [0.22, 0.68, 0.35, 1.0] as const,
-};
+const LoadingSkeleton = () => (
+  <div className="absolute top-8 right-8 bottom-8 w-[420px] bg-[#0A0D15]/40 backdrop-blur-md rounded-2xl border border-white/5 flex items-center justify-center animate-pulse pointer-events-auto">
+    <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
+  </div>
+);
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface PanelHostProps {
   mode: AppMode;
-  /** Chat hook state — passed through to ChatPanel to avoid re-creating useChat. */
   chat?: UseChatReturn;
 }
 
-/**
- * PanelHost
- *
- * AnimatePresence container that renders the currently active panel.
- * Sits at z-20 — above the HUD (z-10) but below PermissionConfirmModal (z-50).
- *
- * When mode is 'core', no panel is rendered — the bare 3D scene shows through.
- * Panels slide in from the right with a subtle blur transition.
- *
- * The SpaceScene is a sibling, never remounts during mode changes.
- */
 export default function PanelHost({ mode, chat }: PanelHostProps) {
+  let content: React.ReactNode = null;
+  
+  if (mode !== 'core') {
+    content = (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingSkeleton />}>
+          {mode === 'chat' && (chat ? <ChatPanel chat={chat} /> : <div className="absolute top-8 right-8 p-4 bg-red-900/50 text-white rounded">Chat unavailable</div>)}
+          {mode === 'auto'     && <AutoPanel />}
+          {mode === 'memory'   && <MemoryPanel />}
+          {mode === 'settings' && <SettingsPanel />}
+        </Suspense>
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <div
       className="absolute inset-0 pointer-events-none"
       style={{ zIndex: 20 }}
     >
-      <AnimatePresence mode="wait">
-        {mode !== 'core' && (
-          <motion.div
-            key={mode}
-            variants={panelVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={panelTransition}
-            className="absolute inset-0 pointer-events-none"
-            style={{ willChange: 'opacity, transform, filter' }}
-          >
-            <Suspense fallback={null}>
-              {mode === 'chat'     && chat && <ChatPanel chat={chat} />}
-              {mode === 'auto'     && <AutoPanel />}
-              {mode === 'memory'   && <MemoryPanel />}
-              {mode === 'settings' && <SettingsPanel />}
-            </Suspense>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <GsapPresence mode={mode}>
+        {content}
+      </GsapPresence>
     </div>
   );
 }

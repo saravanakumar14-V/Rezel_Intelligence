@@ -1,0 +1,299 @@
+﻿.graphRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  position: relative;
+  user-select: none;
+}
+
+.headerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(6, 11, 30, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 229, 255, 0.20);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.goalWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 70%;
+}
+
+.goalLabel {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  text-transform: uppercase;
+}
+
+.goalText {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 12px;
+  color: #EAFBFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stateControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusPill {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.statusPill-running {
+  background: rgba(0, 229, 255, 0.15);
+  color: #00E5FF;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+  animation: pulse-border 1.5s infinite;
+}
+
+.statusPill-succeeded {
+  background: rgba(0, 230, 118, 0.15);
+  color: #00E676;
+  border: 1px solid rgba(0, 230, 118, 0.35);
+}
+
+.statusPill-failed {
+  background: rgba(255, 61, 113, 0.15);
+  color: #FF3D71;
+  border: 1px solid rgba(255, 61, 113, 0.35);
+}
+
+.statusPill-cancelled {
+  background: rgba(255, 159, 28, 0.15);
+  color: #FF9F1C;
+  border: 1px solid rgba(255, 159, 28, 0.35);
+}
+
+.statusPill-paused {
+  background: rgba(255, 213, 79, 0.15);
+  color: #FFD54F;
+  border: 1px solid rgba(255, 213, 79, 0.35);
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 229, 255, 0.2); }
+  50%      { box-shadow: 0 0 16px rgba(0, 229, 255, 0.45); }
+}
+
+/* ── Flow Container ──────────────────────────────────────────────────────── */
+
+.flowContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.spineLine {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(0, 229, 255, 0.4) 0%, rgba(179, 136, 255, 0.4) 50%, rgba(0, 230, 118, 0.4) 100%);
+  border-radius: 9999px;
+}
+
+.stepCard {
+  background: rgba(10, 16, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stepCard:hover {
+  border-color: rgba(0, 229, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  transform: translateX(2px);
+}
+
+.stepCardActive {
+  border-color: rgba(179, 136, 255, 0.6);
+  background: rgba(18, 14, 38, 0.92);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75), 0 0 20px rgba(179, 136, 255, 0.25);
+  transform: scale(1.01);
+}
+
+.stepCardCompleted {
+  border-color: rgba(0, 230, 118, 0.22);
+}
+
+.stepCardFailed {
+  border-color: rgba(255, 61, 113, 0.5);
+  background: rgba(30, 10, 18, 0.9);
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stepTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nodeAnchor {
+  position: absolute;
+  left: -20px;
+  top: 16px;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #00E5FF;
+  border: 2px solid #060B1E;
+  box-shadow: 0 0 8px #00E5FF;
+}
+
+.nodeAnchorActive {
+  background: #B388FF;
+  box-shadow: 0 0 12px #B388FF;
+  animation: pulse-ring 1s infinite;
+}
+
+.nodeAnchorCompleted {
+  background: #00E676;
+  box-shadow: 0 0 8px #00E676;
+}
+
+.nodeAnchorFailed {
+  background: #FF3D71;
+  box-shadow: 0 0 10px #FF3D71;
+}
+
+.stepIndex {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.stepDescription {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #EAFBFF;
+}
+
+.capabilityBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 229, 255, 0.08);
+  color: #7ECFFF;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  letter-spacing: 0.06em;
+}
+
+.paramPreview {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  color: rgba(126, 207, 255, 0.7);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  word-break: break-all;
+}
+
+.verifBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(0, 230, 118, 0.08);
+  color: #00E676;
+  border: 1px solid rgba(0, 230, 118, 0.25);
+}
+
+.errorBanner {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  color: #FF5252;
+  background: rgba(255, 61, 113, 0.12);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 61, 113, 0.3);
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.miniBtn {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.miniBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFF;
+}
+
+.miniBtnPrimary {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.35);
+}
+
+.miniBtnPrimary:hover {
+  background: rgba(0, 229, 255, 0.25);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.miniBtnDanger {
+  background: rgba(255, 61, 113, 0.12);
+  color: #FF3D71;
+  border-color: rgba(255, 61, 113, 0.35);
+}
+
+.miniBtnDanger:hover {
+  background: rgba(255, 61, 113, 0.25);
+  box-shadow: 0 0 10px rgba(255, 61, 113, 0.3);
+}

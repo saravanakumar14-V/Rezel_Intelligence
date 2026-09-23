@@ -1,17 +1,101 @@
+# ============================================
+# Rezel — Root Git Ignore
+# ============================================
+
+# Logs
+logs/
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node / Package Managers
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+
 # Python
 venv/
+.venv/
+**/venv/
+**/.venv/
 __pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
 
-# Node
-node_modules/
+# Rust / Tauri build artifacts
+target/
+**/target/
 
-# Environment
-.env
+# Frontend build artifacts
+dist/
+**/dist/
+dist-ssr/
+**/dist-ssr/
+dist_test/
+**/dist_test/
+coverage/
+**/coverage/
 
-# IDE
-.vscode/
+# Rezel generated test/runtime output
+**/temp_test_out/
+**/rezel_test_persist_*/
+**/rezel_test_sched_*/
+
+# Local databases / runtime data
+/ruvector.db
+
+# Scratch / temporary files
+/scratch/
+*.tmp
+*.temp
+*.tsbuildinfo
+*.pid
+*.seed
+
+# Editor / IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# Ruflo / Claude Flow runtime & metrics
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/sessions/
+.claude-flow/metrics/
+.claude-flow/policy/
+.claude-flow/security/
+.claude-flow/neural/
+.claude-flow/daemon-state.json
+.claude-flow/memory-package.json
+.claude-flow/harness-active-policy.json
+.claude-flow/*.pid
+
+# Agent machine-local MCP config
+.agent/mcp_config.json
+
+# npm lockfile — Rezel uses pnpm
+package-lock.json
+
+# Local swarm databases and backups
+.swarm/*.db
+.swarm/backups/

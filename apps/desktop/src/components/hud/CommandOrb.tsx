@@ -1,9 +1,9 @@
-import { useMemo } from "react";
 import { cn } from "../../lib/cn";
+import styles from "./CommandOrb.module.css";
 
-export type OrbState = "idle" | "listening" | "thinking" | "speaking";
+export type OrbState = "idle" | "listening" | "thinking" | "speaking" | "interrupted";
 
-interface CommandOrbProps {
+export interface CommandOrbProps {
   state?: OrbState;
   onClick?: () => void;
   className?: string;
@@ -12,168 +12,94 @@ interface CommandOrbProps {
 /**
  * STATE_CONFIG
  *
- * Defines visual parameters for each voice-engine state.
- * Colours, ring opacity, and animation timing vary per state so the
- * orb communicates its mode at a glance.
+ * Defines human-readable telemetry labels for each voice-engine state.
+ * Color, ring, glow, and motion behavior are defined in CommandOrb.module.css
+ * using B1 Design Tokens (--rz-voice-*).
  */
-const STATE_CONFIG: Record<
+export const STATE_CONFIG: Record<
   OrbState,
-  { label: string; core: string; ring: string; pulse: string; bpm: number }
+  { label: string; description: string }
 > = {
   idle: {
     label: "STANDBY",
-    core: "#00BFFF",
-    ring: "rgba(0,200,255,0.15)",
-    pulse: "rgba(0,200,255,0.06)",
-    bpm: 3,
+    description: "Voice assistant idle, waiting for activation keyword or command",
   },
   listening: {
     label: "LISTENING",
-    core: "#00FF90",
-    ring: "rgba(0,255,144,0.25)",
-    pulse: "rgba(0,255,144,0.10)",
-    bpm: 1.2,
+    description: "Microphone active, receiving speech stream",
   },
   thinking: {
     label: "PROCESSING",
-    core: "#A880FF",
-    ring: "rgba(168,128,255,0.25)",
-    pulse: "rgba(168,128,255,0.10)",
-    bpm: 0.8,
+    description: "Processing reasoning and plan generation",
   },
   speaking: {
     label: "SPEAKING",
-    core: "#FF9F1C",
-    ring: "rgba(255,159,28,0.25)",
-    pulse: "rgba(255,159,28,0.10)",
-    bpm: 1.8,
+    description: "Audio synthesis output active",
+  },
+  interrupted: {
+    label: "INTERRUPTED",
+    description: "Barge-in detected, synthesized speech cancelled",
   },
 };
 
 /**
  * CommandOrb
  *
- * A concentric-ring voice-state indicator placed at the bottom centre of
- * the HomeScreen HUD overlay. Three rings animate at staggered delays so the
- * orb always appears to be "breathing". The inner core colour changes per state.
+ * Visual representation of Rezel Voice & Reasoning Engine state.
+ * Implements Stitch DESIGN.md multi-layered visual hierarchy:
+ * 1. Core orb with state-driven radial gradient
+ * 2. Inner glow & pulse ring
+ * 3. Primary ring
+ * 4. Secondary ring / orbital activity
+ * 5. Telemetry corner brackets
+ * 6. Monospace state label
  *
- * All animation is pure CSS keyframes (no JS RAF overhead).
- * Voice state is wired from useVoice → HomeScreen → HologramHUD → CommandOrb.
+ * Pure CSS animations via CommandOrb.module.css for zero JS render overhead.
  */
 export default function CommandOrb({ state = "idle", onClick, className }: CommandOrbProps) {
-  const cfg = STATE_CONFIG[state];
-
-  // Unique animation duration per state derived from BPM
-  const pulseDuration = useMemo(
-    () => `${(60 / cfg.bpm).toFixed(1)}s`,
-    [cfg.bpm]
-  );
+  const cfg = STATE_CONFIG[state] || STATE_CONFIG.idle;
+  const stateClass = styles[`state-${state}`] || styles["state-idle"];
+  const isInteractive = Boolean(onClick);
 
   return (
     <div
-      className={cn("flex flex-col items-center gap-2", className)}
+      className={cn(
+        styles.container,
+        stateClass,
+        isInteractive ? styles.interactive : styles.nonInteractive,
+        className
+      )}
       onClick={onClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.(); }}
-      role="button"
-      tabIndex={0}
-      aria-label={`Voice control: ${cfg.label}`}
-      style={{
-        cursor: onClick ? 'pointer' : 'default',
-        pointerEvents: onClick ? 'auto' : 'none',
+      onKeyDown={(e) => {
+        if ((e.key === "Enter" || e.key === " ") && onClick) {
+          e.preventDefault();
+          onClick();
+        }
       }}
+      role="button"
+      tabIndex={isInteractive ? 0 : undefined}
+      aria-label={`Voice status: ${cfg.label}`}
+      aria-description={cfg.description}
     >
-      {/* Rings stack — 3 concentric pulse rings */}
-      <div className="relative flex items-center justify-center" style={{ width: 88, height: 88 }}>
+      {/* Visual rings stack */}
+      <div className={styles.stack}>
         {/* Outer pulse ring */}
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 88,
-            height: 88,
-            border: `1px solid ${cfg.ring}`,
-            background: cfg.pulse,
-            animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
-            animationDelay: "0s",
-            transition: "border-color 0.6s ease, background 0.6s ease",
-          }}
-          aria-hidden
-        />
+        <div className={styles.outerRing} aria-hidden="true" />
         {/* Mid ring */}
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 64,
-            height: 64,
-            border: `1px solid ${cfg.ring}`,
-            background: cfg.pulse,
-            animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
-            animationDelay: "-0.4s",
-            opacity: 0.85,
-            transition: "border-color 0.6s ease, background 0.6s ease",
-          }}
-          aria-hidden
-        />
+        <div className={styles.midRing} aria-hidden="true" />
         {/* Inner ring */}
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 44,
-            height: 44,
-            border: `1px solid ${cfg.ring}`,
-            background: cfg.pulse,
-            animation: `rezel-orb-pulse ${pulseDuration} ease-in-out infinite`,
-            animationDelay: "-0.8s",
-            opacity: 0.7,
-            transition: "border-color 0.6s ease, background 0.6s ease",
-          }}
-          aria-hidden
-        />
+        <div className={styles.innerRing} aria-hidden="true" />
 
-        {/* Core orb */}
-        <div
-          className="relative rounded-full z-10"
-          style={{
-            width: 28,
-            height: 28,
-            background: `radial-gradient(circle at 35% 35%, #fff 0%, ${cfg.core} 50%, transparent 100%)`,
-            boxShadow: `0 0 12px ${cfg.core}, 0 0 28px ${cfg.ring}, 0 0 48px ${cfg.pulse}`,
-            transition: "background 0.6s ease, box-shadow 0.6s ease",
-          }}
-        />
+        {/* Core glowing orb */}
+        <div className={styles.core} aria-hidden="true" />
 
-        {/* Corner accent lines (top-left / bottom-right) */}
-        <div
-          className="absolute top-0 left-0 w-4 h-4 border-t border-l rounded-tl-full"
-          style={{
-            borderColor: cfg.core,
-            opacity: 0.5,
-            transition: "border-color 0.6s ease",
-          }}
-          aria-hidden
-        />
-        <div
-          className="absolute bottom-0 right-0 w-4 h-4 border-b border-r rounded-br-full"
-          style={{
-            borderColor: cfg.core,
-            opacity: 0.5,
-            transition: "border-color 0.6s ease",
-          }}
-          aria-hidden
-        />
+        {/* Telemetry corner brackets */}
+        <div className={styles.bracketTopLeft} aria-hidden="true" />
+        <div className={styles.bracketBottomRight} aria-hidden="true" />
       </div>
 
-      {/* State label */}
-      <span
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: "9px",
-          letterSpacing: "0.2em",
-          color: cfg.core,
-          opacity: 0.7,
-          transition: "color 0.6s ease",
-        }}
-        className="uppercase"
-      >
+      {/* State monospace label */}
+      <span className={styles.label}>
         {cfg.label}
       </span>
     </div>

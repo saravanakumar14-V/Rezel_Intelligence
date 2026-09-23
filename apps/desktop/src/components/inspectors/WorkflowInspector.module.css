@@ -1,0 +1,339 @@
+.workflowRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* ── Workflow Switcher Pills ────────────────────────────────────── */
+.workflowSwitcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.switcherPill {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.switcherPill:hover {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.25);
+}
+
+.switcherPillActive {
+  background: rgba(0, 229, 255, 0.18);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
+}
+
+/* ── Hero Goal Card ─────────────────────────────────────────────── */
+.heroCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(6, 16, 38, 0.75);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
+
+.heroHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.heroStatusGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stateBeacon {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 8px var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.stateBeaconRunning {
+  background: #00E5FF;
+  animation: beacon-pulse 1.4s ease-in-out infinite;
+}
+
+.stateBeaconFailed {
+  background: #FF5252;
+  box-shadow: 0 0 10px #FF5252;
+}
+
+.stateBeaconVerified {
+  background: #00E676;
+  box-shadow: 0 0 10px #00E676;
+}
+
+@keyframes beacon-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.3); opacity: 0.6; }
+}
+
+.statusLabel {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.progressBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.goalTitle {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: #EAFBFF;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.heroMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: rgba(126, 207, 255, 0.65);
+}
+
+.appTag {
+  color: #00E676;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.25);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ── Active Step Highlight Card ─────────────────────────────────── */
+.activeStepCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(10, 22, 50, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  border-radius: var(--rz-radius-lg, 8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 229, 255, 0.1);
+}
+
+.stepHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stepIndexBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.stepActionName {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #EAFBFF;
+}
+
+.paramBox {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  color: rgba(126, 207, 255, 0.7);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.verificationPill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  width: fit-content;
+}
+
+.verified {
+  color: #00E676;
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+}
+
+.unverified {
+  color: #FFA000;
+  background: rgba(255, 160, 0, 0.12);
+  border: 1px solid rgba(255, 160, 0, 0.35);
+}
+
+.failed {
+  color: #FF5252;
+  background: rgba(255, 82, 82, 0.12);
+  border: 1px solid rgba(255, 82, 82, 0.35);
+}
+
+/* ── Failure & Recovery Diagnostic Card ─────────────────────────── */
+.recoveryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgba(38, 10, 20, 0.85);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(16px);
+}
+
+.recoveryHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #FF5252;
+  text-transform: uppercase;
+}
+
+.recoveryReason {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  color: rgba(255, 200, 200, 0.9);
+  line-height: 1.45;
+}
+
+.recoveryActionText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: #7ECFFF;
+}
+
+/* ── Primary Action Controls ────────────────────────────────────── */
+.controlRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btnAction {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--rz-radius-lg, 8px);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btnPrimary {
+  background: rgba(0, 229, 255, 0.18);
+  border: 1px solid rgba(0, 229, 255, 0.45);
+  color: #EAFBFF;
+}
+
+.btnPrimary:hover {
+  background: rgba(0, 229, 255, 0.32);
+  border-color: #00E5FF;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.3);
+}
+
+.btnDanger {
+  background: rgba(255, 82, 82, 0.15);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  color: #FF5252;
+}
+
+.btnDanger:hover {
+  background: rgba(255, 82, 82, 0.25);
+  box-shadow: 0 0 14px rgba(255, 82, 82, 0.3);
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #7ECFFF;
+}
+
+.btnSecondary:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.35);
+  color: #00E5FF;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  text-align: center;
+  gap: 10px;
+  color: rgba(234, 251, 255, 0.4);
+}

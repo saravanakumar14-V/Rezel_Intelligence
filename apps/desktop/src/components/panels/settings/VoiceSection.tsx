@@ -1,14 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Mic, Volume2 } from 'lucide-react';
 
 /**
  * VoiceSection
  *
- * Read-only informational section for Voice Capabilities in Settings.
- * Direct browser capability detection for STT and TTS without hook re-instantiation.
+ * Read-only informational section for Voice Capabilities in Settings,
+ * with a toggle for Global Auto TTS.
  */
 export default function VoiceSection() {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [autoTts, setAutoTts] = useState(() => {
+    return localStorage.getItem('rezel_auto_tts') === 'true';
+  });
+
+  const toggleAutoTts = useCallback(() => {
+    const newValue = !autoTts;
+    setAutoTts(newValue);
+    localStorage.setItem('rezel_auto_tts', String(newValue));
+    window.dispatchEvent(new Event('rezel-tts-config-changed'));
+  }, [autoTts]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -60,6 +70,33 @@ export default function VoiceSection() {
 
       {/* Info Rows */}
       <div className="flex flex-col gap-2">
+        {/* Auto TTS Toggle */}
+        <div className="flex items-center justify-between gap-3 pb-2 border-b border-[#00E5FF]/10 mb-1">
+          <div className="flex flex-col gap-0.5">
+            <span style={{ fontSize: '10px', color: '#4BB8F0' }}>Auto TTS Responses</span>
+            <span style={{ fontSize: '8px', color: '#7ECFFF', opacity: 0.6 }}>
+              Speak all Agent replies automatically
+            </span>
+          </div>
+          <button
+            onClick={toggleAutoTts}
+            className="relative w-8 h-4 rounded-full transition-colors duration-300"
+            style={{
+              background: autoTts ? 'rgba(0,229,255,0.2)' : 'rgba(255,255,255,0.05)',
+              border: `1px solid ${autoTts ? 'rgba(0,229,255,0.4)' : 'rgba(255,255,255,0.1)'}`,
+            }}
+          >
+            <div
+              className="absolute top-0.5 w-2.5 h-2.5 rounded-full transition-all duration-300 shadow-sm"
+              style={{
+                background: autoTts ? '#00E5FF' : '#4BB8F0',
+                left: autoTts ? 'calc(100% - 12px)' : '3px',
+                opacity: autoTts ? 1 : 0.4,
+              }}
+            />
+          </button>
+        </div>
+
         {/* STT Status */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-1.5">

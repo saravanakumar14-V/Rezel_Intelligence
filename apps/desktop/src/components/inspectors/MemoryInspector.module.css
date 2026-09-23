@@ -1,0 +1,404 @@
+.memoryRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* ── Mode Switcher Tabs ─────────────────────────────────────────── */
+.modeTabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.modeTab {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modeTab:hover {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.25);
+}
+
+.modeTabActive {
+  background: rgba(0, 229, 255, 0.18);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
+}
+
+/* ── Search Bar ─────────────────────────────────────────────────── */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(4, 10, 26, 0.7);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.searchBar:focus-within {
+  border-color: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  color: #EAFBFF;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Filter Pills Row ───────────────────────────────────────────── */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+}
+
+.filterPill {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterPill:hover {
+  color: #7ECFFF;
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.filterPillActive {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border-color: rgba(0, 229, 255, 0.35);
+}
+
+/* ── List Containers ────────────────────────────────────────────── */
+.contentList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+
+/* ── Memory Item Card ───────────────────────────────────────────── */
+.memoryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  background: rgba(6, 14, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.memoryCard:hover {
+  background: rgba(8, 20, 48, 0.85);
+  border-color: rgba(0, 229, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.memoryCardSelected {
+  background: rgba(10, 25, 60, 0.9);
+  border-color: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.15);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.typeBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.scopeBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 7.5px;
+  color: rgba(126, 207, 255, 0.6);
+}
+
+.memoryContent {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11.5px;
+  color: #EAFBFF;
+  line-height: 1.45;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.35);
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.actionLink {
+  color: #7ECFFF;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.actionLink:hover {
+  color: #00E5FF;
+  text-decoration: underline;
+}
+
+.actionDanger {
+  color: rgba(255, 82, 82, 0.6);
+}
+
+.actionDanger:hover {
+  color: #FF5252;
+}
+
+/* ── Knowledge Document Card ────────────────────────────────────── */
+.docCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: rgba(6, 14, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.docCard:hover {
+  background: rgba(8, 20, 48, 0.85);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+.docInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 80%;
+}
+
+.docTitle {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  color: #EAFBFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docMeta {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  color: rgba(126, 207, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Deep Provenance Modal / Focus Card ─────────────────────────── */
+.provenanceFocusCard {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  background: rgba(8, 20, 48, 0.9);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  border-radius: var(--rz-radius-lg, 8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 229, 255, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.provHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.provTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #00E5FF;
+  text-transform: uppercase;
+}
+
+.provContentBox {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 12px;
+  color: #EAFBFF;
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 229, 255, 0.15);
+}
+
+.provGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.provGridCell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+.provLabel {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(126, 207, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.provVal {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  color: #EAFBFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.provActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.forgetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(255, 82, 82, 0.15);
+  border: 1px solid rgba(255, 82, 82, 0.35);
+  border-radius: 6px;
+  color: #FF5252;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.forgetBtn:hover {
+  background: rgba(255, 82, 82, 0.28);
+  box-shadow: 0 0 10px rgba(255, 82, 82, 0.3);
+}
+
+/* ── Transcript Discovery Banner ────────────────────────────────── */
+.transcriptBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: var(--rz-radius-lg, 8px);
+}
+
+.transcriptBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transcriptBannerText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  color: rgba(126, 207, 255, 0.8);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 16px;
+  text-align: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+}

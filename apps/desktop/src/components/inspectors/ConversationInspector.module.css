@@ -1,0 +1,109 @@
+.conversationRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(4, 10, 26, 0.7);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: var(--rz-radius-lg, 8px);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.searchBar:focus-within {
+  border-color: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  color: #EAFBFF;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.sessionDetailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  color: #7ECFFF;
+  text-decoration: underline;
+}
+
+.resumeBtn {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.14);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.resumeBtn:hover {
+  background: rgba(0, 229, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+}
+
+.transcriptList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  text-align: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+}

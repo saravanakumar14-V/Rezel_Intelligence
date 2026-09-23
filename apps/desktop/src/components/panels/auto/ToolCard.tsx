@@ -1,4 +1,4 @@
-import { Terminal, HardDrive, Shield, Database, Globe, Cpu } from 'lucide-react';
+import { Terminal, HardDrive, Shield, Database, Globe, Cpu, Box, Film } from 'lucide-react';
 import type { ToolDefinition, ToolCategory } from '../../../lib/ai/types';
 import type { RiskLevel } from '../../../lib/security/PermissionManager';
 
@@ -14,12 +14,14 @@ const RISK_COLOR: Record<RiskLevel, string> = {
 // ─── Category icons ───────────────────────────────────────────────────────────
 
 const CATEGORY_ICON: Record<ToolCategory, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
-  system:  Cpu,
-  memory:  Database,
-  file:    HardDrive,
-  shell:   Terminal,
-  network: Globe,
-  ai:      Shield,
+  system:      Cpu,
+  memory:      Database,
+  file:        HardDrive,
+  shell:       Terminal,
+  network:     Globe,
+  ai:          Shield,
+  application: Box,
+  media:       Film,
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────

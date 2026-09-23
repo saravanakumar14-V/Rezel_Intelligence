@@ -1,0 +1,166 @@
+.bandRoot {
+  position: absolute;
+  bottom: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 580px;
+  max-width: calc(100vw - 64px);
+  z-index: 15;
+  pointer-events: auto;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.capsule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.88));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: var(--rz-radius-xl, 12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  gap: 10px;
+}
+
+.capsuleRunning {
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 229, 255, 0.2);
+}
+
+.capsuleFailed {
+  border-color: rgba(255, 82, 82, 0.55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 82, 82, 0.25);
+}
+
+.capsuleVerified {
+  border-color: rgba(0, 230, 118, 0.55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 230, 118, 0.2);
+}
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.stateDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 8px var(--rz-accent-cyan-core, #00E5FF);
+  flex-shrink: 0;
+}
+
+.stateDotRunning {
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 10px var(--rz-accent-cyan-core, #00E5FF);
+  animation: pulse 1.5s infinite;
+}
+
+.stateDotFailed {
+  background: #FF5252;
+  box-shadow: 0 0 10px #FF5252;
+}
+
+.stateDotVerified {
+  background: #00E676;
+  box-shadow: 0 0 10px #00E676;
+}
+
+.title {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--rz-text-primary, #FFFFFF);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stepDesc {
+  font-family: var(--rz-font-sans, sans-serif);
+  font-size: 11px;
+  color: var(--rz-text-tertiary, rgba(126, 207, 255, 0.55));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.progressBar {
+  width: 64px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #7A5CFF, #00E5FF);
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.viewBtn {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewBtn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.35);
+  color: #FFFFFF;
+}
+
+/* ── Responsive Viewport Rules ────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .bandRoot {
+    width: 500px;
+    bottom: 68px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bandRoot {
+    width: calc(100vw - 20px);
+    bottom: 58px;
+  }
+  .stepDesc {
+    display: none;
+  }
+}
+
+@media (min-width: 2400px) {
+  .bandRoot {
+    width: 680px;
+    bottom: 96px;
+  }
+}

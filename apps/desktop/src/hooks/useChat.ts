@@ -17,9 +17,10 @@
  *  This avoids the handler overwrite conflict between voice and chat.
  */
 
-import { useState, useCallback, useRef } from 'react';
-import { AgentCore } from '../lib/ai/AgentCore';
-import type { AgentEvent, AgentStatus } from '../lib/ai/AgentCore';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+
+import type { AgentStatus } from '../lib/ai/AgentCore';
+import { RezelDirector, type DirectorEvent } from '../lib/director/RezelDirector';
 import type { Message } from '../lib/ai/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -50,7 +51,7 @@ export interface UseChatReturn {
    * HomeScreen calls this from its event handler so useChat can track
    * streaming text without owning the AgentCore event handler.
    */
-  handleAgentEvent: (event: AgentEvent) => void;
+  handleAgentEvent: (event: DirectorEvent) => void;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -62,52 +63,64 @@ export function useChat(): UseChatReturn {
   const [status, setStatus] = useState<AgentStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(
-    AgentCore.getConversationId()
+    RezelDirector.getConversationId()
   );
 
   // Ref to accumulate streaming text without stale closure issues
   const streamAccRef = useRef('');
+  const isProcessingRef = useRef(isProcessing);
+
+  useEffect(() => {
+    isProcessingRef.current = isProcessing;
+  }, [isProcessing]);
+
+  useEffect(() => {
+    setMessages(RezelDirector.getMessages());
+  }, []);
 
   // ── Sync messages from AgentCore ────────────────────────────────────────
 
   const refreshMessages = useCallback(() => {
-    setMessages(AgentCore.getMessages());
+    setMessages(RezelDirector.getMessages());
   }, []);
 
   // ── Event handler (called by HomeScreen, not set directly on AgentCore) ─
 
-  const handleAgentEvent = useCallback((event: AgentEvent) => {
+  const handleAgentEvent = useCallback((event: DirectorEvent) => {
     switch (event.type) {
       case 'stream_start':
+        console.info(`[CHAT_TRACE] { stage: 'use_chat_stream_start' }`);
         streamAccRef.current = '';
         setStreamingText('');
         setIsProcessing(true);
         break;
 
       case 'stream_text':
-        if (event.text) {
-          streamAccRef.current += event.text;
+        if (event.payload?.text) {
+          streamAccRef.current += event.payload.text;
           setStreamingText(streamAccRef.current);
         }
         break;
 
       case 'stream_end':
+        console.info(`[CHAT_TRACE] { stage: 'use_chat_stream_end', totalStreamedLength: ${streamAccRef.current.length} }`);
         setStreamingText('');
         streamAccRef.current = '';
         refreshMessages();
         setIsProcessing(false);
         break;
 
-      case 'stream_error':
-        setError(event.error ?? 'Unknown error');
+      case 'error':
+        console.error(`[CHAT_TRACE] { stage: 'use_chat_error_event', error: '${event.payload?.error}' }`);
+        setError(event.payload?.error ?? 'Unknown error');
         setStreamingText('');
         streamAccRef.current = '';
         setIsProcessing(false);
         break;
 
       case 'status_change':
-        if (event.status) {
-          setStatus(event.status);
+        if (event.payload?.status) {
+          setStatus(event.payload.status);
         }
         break;
     }
@@ -116,9 +129,10 @@ export function useChat(): UseChatReturn {
   // ── Send ─────────────────────────────────────────────────────────────────
 
   const send = useCallback(async (content: string) => {
-    if (!content.trim() || isProcessing) return;
+    if (!content.trim() || isProcessingRef.current) return;
 
     setError(null);
+    console.info(`[CHAT_TRACE] { stage: 'use_chat_send_dispatched', messageLength: ${content.trim().length} }`);
 
     // Optimistic: add user message to local state immediately
     const userMsg: Message = {
@@ -129,19 +143,23 @@ export function useChat(): UseChatReturn {
     setMessages((prev) => [...prev, userMsg]);
 
     try {
-      await AgentCore.send(content.trim());
+      const response = await RezelDirector.send(content.trim());
+      console.info(`[CHAT_TRACE] { stage: 'use_chat_send_completed', responseLength: ${response?.length || 0} }`);
       // After send completes, sync conversation ID if it was auto-created
-      setConversationId(AgentCore.getConversationId());
+      setConversationId(RezelDirector.getConversationId());
+      setMessages(RezelDirector.getMessages());
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[CHAT_TRACE] { stage: 'use_chat_send_failed', error: '${msg}' }`);
       setError(msg);
+      setMessages(RezelDirector.getMessages());
     }
-  }, [isProcessing]);
+  }, []);
 
   // ── Abort ────────────────────────────────────────────────────────────────
 
   const abort = useCallback(() => {
-    AgentCore.abort();
+    RezelDirector.interrupt();
     setStreamingText('');
     streamAccRef.current = '';
     setIsProcessing(false);
@@ -150,7 +168,7 @@ export function useChat(): UseChatReturn {
   // ── Conversation management ─────────────────────────────────────────────
 
   const newConversation = useCallback(() => {
-    const id = AgentCore.startConversation();
+    const id = RezelDirector.startConversation();
     setConversationId(id);
     setMessages([]);
     setStreamingText('');
@@ -158,16 +176,16 @@ export function useChat(): UseChatReturn {
   }, []);
 
   const loadConversation = useCallback((id: string) => {
-    const ok = AgentCore.loadConversation(id);
+    const ok = RezelDirector.loadConversation(id);
     if (ok) {
       setConversationId(id);
-      setMessages(AgentCore.getMessages());
+      setMessages(RezelDirector.getMessages());
       setStreamingText('');
       setError(null);
     }
   }, []);
 
-  return {
+  return useMemo(() => ({
     messages,
     streamingText,
     isProcessing,
@@ -179,5 +197,17 @@ export function useChat(): UseChatReturn {
     loadConversation,
     conversationId,
     handleAgentEvent,
-  };
+  }), [
+    messages,
+    streamingText,
+    isProcessing,
+    status,
+    error,
+    send,
+    abort,
+    newConversation,
+    loadConversation,
+    conversationId,
+    handleAgentEvent
+  ]);
 }

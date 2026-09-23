@@ -47,4 +47,11 @@ Genesis Boot System
 - `cn.ts` — clsx-based class name utility
 
 ### Fixed
-- `BootScreen.tsx` — stale-closure bug in progress/message index effect resolved using ref tracking
+- `BootScreen.tsx` — stale-closure bug in progress/message index effect resolved using ref tracking
+
+### Changed — Rezel Boot Screen Cinematic AI Awakening Redesign
+- `BootScreen.tsx` — Added AI phase tracking and refined sequencing
+- `BootLogo.tsx` — Added AI energy core, holographic stabilization, cinematic scramble
+- `BootMessages.tsx` — Reduced footprint, added AI startup logs
+- `BootProgress.tsx` — Transformed into cinematic minimal block diagnostics
+- `BootTransition.tsx` — Added subtle grid data movement and smooth energy fade out

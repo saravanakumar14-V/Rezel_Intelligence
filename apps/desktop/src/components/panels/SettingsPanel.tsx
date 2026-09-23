@@ -3,11 +3,14 @@ import PanelShell from './PanelShell';
 
 // ─── Lazy-loaded settings sections ────────────────────────────────────────────
 
-const ApiKeySection     = lazy(() => import('./settings/ApiKeySection'));
-const VoiceSection      = lazy(() => import('./settings/VoiceSection'));
-const SystemSection     = lazy(() => import('./settings/SystemSection'));
-const PermissionsSection = lazy(() => import('./settings/PermissionsSection'));
-const AboutSection      = lazy(() => import('./settings/AboutSection'));
+const PersonalizationSection = lazy(() => import('./settings/PersonalizationSection'));
+const ModelIntelligenceSpace = lazy(() => import('./models/ModelIntelligenceSpace'));
+const ProviderSettingsPanel   = lazy(() => import('./settings/ProviderSettingsPanel'));
+const AuditIntelligenceDeck   = lazy(() => import('../hud/audit/AuditIntelligenceDeck'));
+const VoiceSection            = lazy(() => import('./settings/VoiceSection'));
+const SystemSection           = lazy(() => import('./settings/SystemSection'));
+const PermissionsSection      = lazy(() => import('./settings/PermissionsSection'));
+const AboutSection            = lazy(() => import('./settings/AboutSection'));
 
 // ─── Divider ──────────────────────────────────────────────────────────────────
 
@@ -62,10 +65,22 @@ function SectionFallback() {
  */
 export default function SettingsPanel() {
   return (
-    <PanelShell title="System" subtitle="Configuration">
+    <PanelShell title="System" subtitle="Configuration & Intelligence">
       <div className="flex flex-col gap-4">
         <Suspense fallback={<SectionFallback />}>
-          <ApiKeySection />
+          <PersonalizationSection />
+        </Suspense>
+
+        <SectionDivider />
+
+        <Suspense fallback={<SectionFallback />}>
+          <ModelIntelligenceSpace />
+        </Suspense>
+
+        <SectionDivider />
+
+        <Suspense fallback={<SectionFallback />}>
+          <ProviderSettingsPanel />
         </Suspense>
 
         <SectionDivider />
@@ -84,6 +99,12 @@ export default function SettingsPanel() {
 
         <Suspense fallback={<SectionFallback />}>
           <PermissionsSection />
+        </Suspense>
+
+        <SectionDivider />
+
+        <Suspense fallback={<SectionFallback />}>
+          <AuditIntelligenceDeck />
         </Suspense>
 
         <SectionDivider />

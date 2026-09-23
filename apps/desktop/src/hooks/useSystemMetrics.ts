@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 /**
@@ -15,42 +15,50 @@ export interface SystemMetrics {
 
 const POLL_INTERVAL_MS = 1000;
 
+let currentMetrics: SystemMetrics | null = null;
+let subscribers: Set<React.Dispatch<React.SetStateAction<SystemMetrics | null>>> = new Set();
+let timerId: ReturnType<typeof setInterval> | null = null;
+
+const poll = async () => {
+  try {
+    const data = await invoke<SystemMetrics>("get_system_info");
+    currentMetrics = data;
+  } catch {
+    // Running in a browser dev context without Tauri — use mock data
+    currentMetrics = {
+      cpu_usage: Math.random() * 40 + 10,
+      total_memory: 16 * 1024 * 1024 * 1024,
+      used_memory: (4 + Math.random() * 4) * 1024 * 1024 * 1024,
+    };
+  }
+  subscribers.forEach((sub) => sub(currentMetrics));
+};
+
 /**
  * useSystemMetrics
  *
  * Polls the Tauri `get_system_info` command every second.
+ * Centralized store prevents multiple polling intervals when multiple components use this hook.
  * Returns null while the first response is still in-flight.
- * Falls back gracefully when running outside Tauri (e.g. browser dev).
  */
 export function useSystemMetrics(): SystemMetrics | null {
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [metrics, setMetrics] = useState<SystemMetrics | null>(currentMetrics);
 
   useEffect(() => {
-    let alive = true;
+    subscribers.add(setMetrics);
 
-    const poll = async () => {
-      try {
-        const data = await invoke<SystemMetrics>("get_system_info");
-        if (alive) setMetrics(data);
-      } catch {
-        // Running in a browser dev context without Tauri — use mock data
-        if (alive) {
-          setMetrics({
-            cpu_usage: Math.random() * 40 + 10,
-            total_memory: 16 * 1024 * 1024 * 1024,
-            used_memory: (4 + Math.random() * 4) * 1024 * 1024 * 1024,
-          });
-        }
-      }
-    };
-
-    poll();
-    timerRef.current = setInterval(poll, POLL_INTERVAL_MS);
+    if (subscribers.size === 1) {
+      poll();
+      timerId = setInterval(poll, POLL_INTERVAL_MS);
+    }
 
     return () => {
-      alive = false;
-      if (timerRef.current !== null) clearInterval(timerRef.current);
+      subscribers.delete(setMetrics);
+      if (subscribers.size === 0 && timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+        currentMetrics = null;
+      }
     };
   }, []);
 

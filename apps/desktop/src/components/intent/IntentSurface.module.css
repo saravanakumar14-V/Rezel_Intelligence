@@ -1,0 +1,177 @@
+.intentSurfaceRoot {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 620px;
+  max-width: calc(100vw - 44px);
+  z-index: var(--rz-z-command, 30);
+  pointer-events: auto;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.capsule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 8px;
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.85));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 9999px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.85), 0 0 24px rgba(0, 229, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+}
+
+.capsule:focus-within {
+  border-color: rgba(0, 229, 255, 0.6);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.9), 0 0 36px rgba(0, 229, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.capsuleActive {
+  border-color: rgba(179, 136, 255, 0.65);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.9), 0 0 36px rgba(179, 136, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.capsuleListening {
+  border-color: rgba(126, 207, 255, 0.85);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.9), 0 0 42px rgba(0, 229, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  animation: listeningPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes listeningPulse {
+  0%, 100% {
+    border-color: rgba(0, 229, 255, 0.4);
+    box-shadow: 0 16px 56px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    border-color: rgba(0, 229, 255, 0.9);
+    box-shadow: 0 16px 56px rgba(0, 0, 0, 0.9), 0 0 48px rgba(0, 229, 255, 0.5);
+  }
+}
+
+.orbAnchor {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputField {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--rz-text-primary, #FFFFFF);
+  padding: 4px 6px;
+  min-width: 0;
+}
+
+.inputField::placeholder {
+  color: var(--rz-text-tertiary, rgba(126, 207, 255, 0.45));
+  font-size: 12px;
+}
+
+.inputField:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.shortcutsHint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 4px;
+}
+
+.keyHint {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  color: var(--rz-text-tertiary, rgba(126, 207, 255, 0.5));
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.actionBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.30);
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.actionBtn:hover:not(:disabled) {
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.actionBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 61, 113, 0.18);
+  border: 1px solid rgba(255, 61, 113, 0.45);
+  color: #FF3D71;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 61, 113, 0.30);
+  box-shadow: 0 0 14px rgba(255, 61, 113, 0.4);
+  transform: scale(1.05);
+}
+
+/* ── Responsive Viewport Rules ────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .intentSurfaceRoot {
+    width: 540px;
+    bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .intentSurfaceRoot {
+    width: calc(100vw - 20px);
+    bottom: 10px;
+  }
+  .capsule {
+    padding: 3px 6px;
+    gap: 6px;
+  }
+}
+
+@media (min-width: 2400px) {
+  .intentSurfaceRoot {
+    width: 760px;
+    bottom: 36px;
+  }
+}

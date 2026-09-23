@@ -1,0 +1,1072 @@
+/**
+ * REZEL SPATIAL SURFACE Stylesheet (Quiet Luxury & Production Discipline)
+ * Signature floating glass island material with capability-derived spectral edge lighting.
+ */
+
+.spatialSurfaceContainer {
+  position: relative;
+  height: clamp(520px, 78vh, 880px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: rgba(5, 9, 24, 0.86);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--rz-radius-2xl, 20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85),
+              0 0 16px var(--surf-glow, rgba(0, 229, 255, 0.12));
+  padding: 24px 28px;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* Depth Widths & Weights */
+.surfaceDepthL1 {
+  width: clamp(330px, 31vw, 460px);
+  min-width: 320px;
+  z-index: 20;
+}
+
+.surfaceDepthL2 {
+  width: clamp(350px, 33vw, 500px);
+  min-width: 340px;
+  z-index: 25;
+}
+
+.surfaceDepthL3 {
+  width: clamp(480px, 45vw, 740px);
+  min-width: 460px;
+  z-index: 30;
+}
+
+/* Lifecycle States */
+.stateSpawning {
+  animation: surfaceSpawnMaterialize 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stateActive {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.stateBackground {
+  opacity: 0.82;
+  transform: scale(0.98) translateY(2px);
+  filter: brightness(0.92) saturate(0.92);
+}
+
+.stateBackground:hover {
+  opacity: 0.96;
+  filter: brightness(1.02);
+}
+
+.stateCollapsed {
+  width: 72px !important;
+  opacity: 0.55;
+  overflow: hidden;
+}
+
+.stateClosing {
+  animation: surfaceRetreatFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes surfaceSpawnMaterialize {
+  0% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.96);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes surfaceRetreatFade {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.96);
+    filter: blur(8px);
+  }
+}
+
+/* ── Spectral Edge Beam & Inner Highlight (Restrained 1.5px) ─────────────── */
+
+.spectralEdgeBeam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--surf-accent, #00E5FF) 25%,
+    var(--surf-accent, #00E5FF) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px var(--surf-accent, #00E5FF);
+  pointer-events: none;
+}
+
+.innerGlassHighlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Surface Header (Dual Typography) ──────────────────────────────────── */
+
+.surfaceHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rz-space-md, 16px);
+  width: 100%;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.headerTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerCategoryRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.depthBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--surf-accent, #00E5FF);
+  color: var(--surf-accent, #00E5FF);
+}
+
+.technicalIdentityTag {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--surf-accent, #00E5FF);
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.surfaceHumanTitle {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: clamp(20px, 1.9vw, 26px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--rz-text-primary, #EAFBFF);
+  line-height: 1.15;
+}
+
+.surfaceDescription {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 12px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.headerIconButton,
+.headerCloseButton {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--rz-text-secondary, #7ECFFF);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.headerIconButton:hover,
+.headerIconButtonActive {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--surf-accent, #00E5FF);
+  color: var(--surf-accent, #00E5FF);
+}
+
+.headerCloseButton:hover {
+  background: rgba(255, 82, 82, 0.15);
+  border-color: #FF5252;
+  color: #FF5252;
+}
+
+/* ── 3-Question Micro-Guide Drawer ─────────────────────────────────────── */
+
+.infoDrawer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  background: rgba(3, 7, 18, 0.90);
+  border: 1px solid var(--surf-accent, #00E5FF);
+  border-radius: var(--rz-radius-lg, 10px);
+  animation: drawerSlideDown 0.22s ease-out;
+}
+
+@keyframes drawerSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.infoKey {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--surf-accent, #00E5FF);
+}
+
+.infoVal {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 11px;
+  color: var(--rz-text-primary, #EAFBFF);
+  opacity: 0.88;
+  line-height: 1.35;
+}
+
+/* ── Surface Content Body ──────────────────────────────────────────────── */
+
+.surfaceContentBody {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rz-space-md, 16px);
+}
+
+/* ── Action Island Rows (Discovery Cards) ──────────────────────────────── */
+
+.actionIslandList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.actionIslandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(2, 6, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--rz-radius-xl, 12px);
+  color: var(--rz-text-primary, #EAFBFF);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionIslandRowPrimary {
+  border-color: var(--surf-accent, #00E5FF);
+  background: linear-gradient(
+    135deg,
+    rgba(2, 7, 24, 0.85) 0%,
+    rgba(6, 18, 52, 0.85) 100%
+  );
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+              0 0 14px var(--surf-glow, rgba(0, 229, 255, 0.15));
+}
+
+.actionIslandRow:hover {
+  background: rgba(5, 14, 42, 0.94);
+  border-color: var(--surf-accent, #00E5FF);
+  transform: translateX(4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6),
+              0 0 16px var(--surf-glow, rgba(0, 229, 255, 0.25));
+}
+
+.actionIslandRow:focus-visible {
+  outline: 1.5px solid var(--surf-accent, #00E5FF);
+}
+
+.actionIslandLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.actionIslandHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionSignature {
+  font-size: 13px;
+  color: var(--surf-accent, #00E5FF);
+}
+
+.actionHumanLabel {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.primaryPill {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  padding: 1px 5px;
+  background: var(--surf-accent, #00E5FF);
+  color: #000000;
+  border-radius: 3px;
+}
+
+.actionTechnicalId {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--surf-accent, #00E5FF);
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.actionDescText {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 11px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.8;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.actionIslandRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.actionShortcutBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--surf-accent, #00E5FF);
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.actionChevron {
+  color: var(--surf-accent, #00E5FF);
+  opacity: 0.5;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.actionIslandRow:hover .actionChevron {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ── Operating Task Stage (Level 3+) ───────────────────────────────────── */
+
+.operatingTaskStage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Code Editor */
+.taskCodeEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.taskToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modelSelectorContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modelSelectDropdown {
+  background: transparent;
+  border: none;
+  color: var(--rz-text-primary, #EAFBFF);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.modelSelectDropdown option {
+  background: #04091A;
+  color: #EAFBFF;
+}
+
+.editorActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolIconBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolIconBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.executeButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: var(--surf-accent, #00E5FF);
+  color: #000000;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px var(--surf-glow, rgba(0, 229, 255, 0.25));
+}
+
+.executeButton:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.executeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.codeTextarea {
+  flex: 1;
+  min-height: 200px;
+  background: rgba(1, 3, 10, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #80CBC4;
+  outline: none;
+  resize: none;
+}
+
+.codeTextarea:focus {
+  border-color: var(--surf-accent, #00E5FF);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+}
+
+.taskConsoleOutput {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.consoleHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--rz-text-secondary, #7ECFFF);
+}
+
+.consoleResult {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  color: #A7F3D0;
+}
+
+/* Visual Canvas */
+.taskVisualCanvas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.canvasPreviewBox {
+  flex: 1;
+  min-height: 190px;
+  border-radius: 14px;
+  background: radial-gradient(circle, rgba(10, 22, 52, 0.9) 0%, rgba(2, 5, 14, 0.98) 100%);
+  border: 1px solid var(--surf-accent, #00E5FF);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvasGridBackground {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.canvasCenterPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.canvasStatusText {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #FFE082;
+  text-align: center;
+  max-width: 80%;
+}
+
+.styleAnchorsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.settingMiniLabel {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.styleAnchorBtn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.styleAnchorBtnActive {
+  background: rgba(255, 179, 0, 0.2);
+  border-color: #FFB300;
+  color: #FFF8E1;
+}
+
+.canvasControlsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.promptInput {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 12px;
+  color: var(--rz-text-primary, #EAFBFF);
+  outline: none;
+}
+
+.promptInput:focus {
+  border-color: var(--surf-accent, #00E5FF);
+}
+
+.resolutionSelect {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10.5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.resolutionSelect option {
+  background: #04091A;
+  color: #EAFBFF;
+}
+
+/* Provider Matrix */
+.taskProviderMatrix {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.routingProfileSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profileButtonGroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.profileOptionBtn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profileOptionBtnActive {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: #00E5FF;
+  color: #00E5FF;
+}
+
+.providerCardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.providerCard {
+  background: rgba(2, 5, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.providerCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.providerName {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.providerStatusBadge {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.statusHealthy {
+  background: rgba(0, 230, 118, 0.15);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  color: #00E676;
+}
+
+.statusDegraded {
+  background: rgba(255, 179, 0, 0.15);
+  border: 1px solid rgba(255, 179, 0, 0.4);
+  color: #FFB300;
+}
+
+.providerMetrics {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.8;
+}
+
+/* Telemetry Gauges */
+.taskTelemetryGauges {
+  width: 100%;
+}
+
+.gaugeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.gaugeCard {
+  background: rgba(2, 5, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.gaugeLabel {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  text-transform: uppercase;
+}
+
+.gaugeValue {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: #00E5FF;
+}
+
+.gaugeDetail {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 10.5px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.65;
+}
+
+/* Trust Gates */
+.taskTrustGates {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gateFeedbackToast {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 10px;
+  color: #EAFBFF;
+  animation: drawerSlideDown 0.2s ease-out;
+}
+
+.gateList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(2, 5, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gateRow:hover {
+  background: rgba(6, 14, 38, 0.85);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.gateMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gateTitle {
+  font-family: var(--rz-font-display, sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.gateDesc {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 10.5px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.75;
+}
+
+.gateBadgeActive {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(122, 92, 255, 0.2);
+  border: 1px solid #7A5CFF;
+  color: #B388FF;
+}
+
+.gateBadgePassive {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Persona Designer */
+.taskPersonaDesigner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.themeSelectorGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.themeLabel {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #B388FF;
+  text-transform: uppercase;
+}
+
+.themeButtonsRow {
+  display: flex;
+  gap: 6px;
+}
+
+.themeOptionButton {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: rgba(2, 5, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.themeOptionButtonActive {
+  background: rgba(122, 92, 255, 0.2);
+  border-color: #7A5CFF;
+  color: #FFFFFF;
+}
+
+.sliderGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sliderLabelCol {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 11.5px;
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.rangeInput {
+  width: 100%;
+  accent-color: #00E5FF;
+  cursor: pointer;
+}
+
+/* Generic / Bridge Fallback */
+.taskGenericContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: rgba(2, 5, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.genericStatusHeader,
+.bridgeStatusHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--surf-accent, #00E5FF);
+}
+
+.genericBodyText {
+  font-family: var(--rz-font-body, sans-serif);
+  font-size: 12px;
+  color: var(--rz-text-secondary, #7ECFFF);
+  line-height: 1.45;
+}
+
+.genericActionDeck {
+  display: flex;
+  margin-top: 6px;
+}
+
+/* ── Surface Status Footer ─────────────────────────────────────────────── */
+
+.surfaceFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.surfaceStatusIndicator {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--surf-accent, #00E5FF);
+  text-transform: uppercase;
+}
+
+.surfaceDepthHint {
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.65;
+}
+
+@media (max-width: 900px) {
+  .surfaceDepthL1,
+  .surfaceDepthL2,
+  .surfaceDepthL3 {
+    width: 86vw !important;
+  }
+}

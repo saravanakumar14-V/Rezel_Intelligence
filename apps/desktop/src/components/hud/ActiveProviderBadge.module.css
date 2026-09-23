@@ -1,0 +1,59 @@
+/**
+ * Rezel OS — ActiveProviderBadge CSS Module
+ * Compact HUD and Companion pill indicating active provider and health
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rz-space-1, 4px);
+  padding: 2px 7px;
+  background: var(--rz-bg-surface-subtle, rgba(255, 255, 255, 0.04));
+  backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  border: 1px solid var(--rz-border-color-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--rz-radius-full, 9999px);
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  user-select: none;
+  cursor: default;
+  transition: all var(--rz-duration-micro, 150ms) var(--rz-ease-standard);
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 6px var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.dotHealthy {
+  background: var(--rz-state-success-verified, #00E676);
+  box-shadow: 0 0 6px var(--rz-state-success-verified, #00E676);
+}
+
+.dotWarning {
+  background: var(--rz-state-warning-unknown, #FFD700);
+  box-shadow: 0 0 6px var(--rz-state-warning-unknown, #FFD700);
+}
+
+.dotError {
+  background: var(--rz-state-danger-error, #FF5252);
+  box-shadow: 0 0 6px var(--rz-state-danger-error, #FF5252);
+}
+
+.vendor {
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.model {
+  color: var(--rz-text-secondary, #7ECFFF);
+  opacity: 0.85;
+}
+
+.divider {
+  color: rgba(255, 255, 255, 0.20);
+}

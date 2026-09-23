@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -37,6 +37,7 @@ export default function EnergyRing({
   tiltZ = 0,
 }: EnergyRingProps) {
   const ref = useRef<THREE.Mesh>(null!);
+  const geometry = useMemo(() => new THREE.TorusGeometry(radius, tube, 6, 80), [radius, tube]);
 
   useFrame((_, delta) => {
     if (!ref.current) return;
@@ -44,8 +45,7 @@ export default function EnergyRing({
   });
 
   return (
-    <mesh ref={ref} rotation={[tiltX, 0, tiltZ]}>
-      <torusGeometry args={[radius, tube, 6, 80]} />
+    <mesh ref={ref} rotation={[tiltX, 0, tiltZ]} geometry={geometry}>
       <meshBasicMaterial
         color={color}
         wireframe

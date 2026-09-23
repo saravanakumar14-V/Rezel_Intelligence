@@ -1,0 +1,286 @@
+/**
+ * Rezel OS — HologramHUD CSS Module
+ * Full Mode HUD layout & glass surface styling
+ */
+
+.hudRoot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  will-change: opacity;
+}
+
+.transitionSmooth {
+  transition: opacity var(--rz-duration-atmosphere, 1000ms) var(--rz-ease-standard);
+}
+
+.transitionCinematic {
+  transition: opacity 2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.transitionInstant {
+  transition: none;
+}
+
+/* ── Top HUD Bar ────────────────────────────────────────────────────────── */
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--rz-space-3, 12px) var(--rz-space-6, 24px);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--rz-space-3, 12px);
+  pointer-events: auto;
+}
+
+.brandDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 8px var(--rz-accent-cyan-core, #00E5FF);
+  animation: brand-pulse 2s ease-in-out infinite;
+}
+
+@keyframes brand-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+.brandName {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-brand-size, 11px);
+  font-weight: var(--rz-text-brand-weight, 700);
+  letter-spacing: var(--rz-text-brand-tracking, 0.25em);
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  text-transform: uppercase;
+}
+
+.versionBadge {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-badge-size, 9px);
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+  opacity: 0.50;
+  letter-spacing: var(--rz-text-badge-tracking, 0.18em);
+}
+
+.centerNav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: var(--rz-space-4, 16px);
+  pointer-events: auto;
+}
+
+.clock {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-telemetry-size, 11px);
+  letter-spacing: var(--rz-text-telemetry-tracking, 0.08em);
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+  opacity: 0.70;
+  font-variant-numeric: tabular-nums;
+}
+
+.topHairline {
+  position: absolute;
+  top: 48px;
+  left: var(--rz-space-6, 24px);
+  right: var(--rz-space-6, 24px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--rz-accent-cyan-core, #00E5FF) 0%, transparent 60%);
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* ── Left Telemetry Deck ────────────────────────────────────────────────── */
+
+.telemetryDeck {
+  position: absolute;
+  top: 64px;
+  left: var(--rz-space-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rz-space-3, 12px);
+  pointer-events: auto;
+  z-index: 15;
+  transition: opacity var(--rz-duration-panel, 350ms) var(--rz-ease-standard);
+}
+
+/* ── App Session Badge ──────────────────────────────────────────────────── */
+
+.appSessionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.80));
+  backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  -webkit-backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  border: var(--rz-border-hairline, 1px solid rgba(0, 229, 255, 0.18));
+  border-radius: var(--rz-radius-lg, 8px);
+  box-shadow: var(--rz-glass-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.65));
+  min-width: 180px;
+}
+
+.sessionLabel {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-badge-size, 9px);
+  font-weight: 600;
+  letter-spacing: var(--rz-text-badge-tracking, 0.18em);
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+  text-transform: uppercase;
+}
+
+.sessionStatus {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--rz-state-success-verified, #00E676);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusDotGreen {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: var(--rz-state-success-verified, #00E676);
+  box-shadow: 0 0 6px var(--rz-state-success-verified, #00E676);
+}
+
+/* ── Workflow Summary Mini-Card (Full Mode preview) ─────────────────────── */
+
+.workflowSummaryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--rz-bg-glass-primary, rgba(6, 11, 30, 0.80));
+  backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  -webkit-backdrop-filter: var(--rz-glass-backdrop-subtle, blur(10px));
+  border: var(--rz-border-hairline, 1px solid rgba(0, 229, 255, 0.18));
+  border-radius: var(--rz-radius-lg, 8px);
+  box-shadow: var(--rz-glass-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.65));
+  min-width: 180px;
+}
+
+.workflowHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.workflowTitle {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  text-transform: uppercase;
+}
+
+.workflowStateBadge {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  padding: 1px 4px;
+  border-radius: var(--rz-radius-sm, 4px);
+  background: rgba(0, 229, 255, 0.10);
+  border: 1px solid rgba(0, 229, 255, 0.20);
+}
+
+.workflowStepText {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 10px;
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Bottom Command Area ────────────────────────────────────────────────── */
+
+.bottomCommandArea {
+  position: absolute;
+  bottom: var(--rz-space-8, 32px);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 20;
+}
+
+.bottomHairline {
+  position: absolute;
+  bottom: 0;
+  left: var(--rz-space-6, 24px);
+  right: var(--rz-space-6, 24px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--rz-accent-cyan-core, #00E5FF) 50%, transparent 100%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* ── Creator Automation HUD Host ────────────────────────────────────────── */
+
+.creatorHudHost {
+  position: absolute;
+  top: 64px;
+  right: var(--rz-space-6, 24px);
+  z-index: 15;
+  pointer-events: auto;
+  animation: hud-fade-in var(--rz-duration-panel, 350ms) var(--rz-ease-standard);
+}
+
+@keyframes hud-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .hudRoot,
+  .brandDot,
+  .statusDotGreen,
+  .creatorHudHost {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,20 +1,8 @@
 @import "tailwindcss";
+@import "./colors.css";
+@import "./typography.css";
+@import "./theme.css";
 @import "./animations.css";
-
-
-:root {
-  --bg: #02030A;
-  --surface: #0A1020;
-
-  --primary: #00E5FF;
-  --secondary: #7A5CFF;
-
-  --success: #00FFAE;
-  --danger: #FF3D71;
-  --warning: #FFD54F;
-
-  --text: #EAFBFF;
-}
 
 html,
 body,
@@ -26,9 +14,9 @@ body,
 body {
   margin: 0;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, sans-serif;
+  background: var(--rz-bg-space-void);
+  color: var(--rz-text-primary);
+  font-family: var(--rz-font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -45,7 +33,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 229, 255, 0.12);
-  border-radius: 4px;
+  border-radius: var(--rz-radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -61,7 +49,7 @@ body {
 /* ── Focus ring — accessible but unobtrusive ──────────────────────────── */
 
 :focus-visible {
-  outline: 1px solid rgba(0, 229, 255, 0.5);
+  outline: 1px solid var(--rz-border-color-focus);
   outline-offset: 2px;
 }
 
@@ -69,5 +57,44 @@ body {
 
 ::selection {
   background: rgba(0, 229, 255, 0.2);
-  color: #EAFBFF;
+  color: var(--rz-text-primary);
+}
+
+/* ── Accessibility & High Contrast ──────────────────────────────────────── */
+
+@media (prefers-contrast: more) {
+  :root {
+    --rz-border-color-focus: #00E5FF;
+    --rz-text-primary: #FFFFFF;
+    --rz-text-secondary: #E0F7FA;
+  }
+  :focus-visible {
+    outline: 2px solid #00E5FF;
+    outline-offset: 3px;
+  }
+}
+
+/* ── Reduced Motion Universal Protection ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Screen Reader Only Semantic Utility ────────────────────────────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

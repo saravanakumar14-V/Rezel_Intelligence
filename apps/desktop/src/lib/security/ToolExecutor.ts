@@ -3,6 +3,8 @@ import { PermissionManager } from './PermissionManager';
 import { SafetyValidator } from './SafetyValidator';
 import { AuditLogger } from './AuditLogger';
 import type { RiskLevel } from './PermissionManager';
+import { PolicyEngine } from './policy/PolicyEngine';
+import type { PolicyEvaluationContext, ApprovalContext } from './policy/PolicyTypes';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -15,12 +17,14 @@ export interface ApprovalRequest {
   readonly args: readonly unknown[];
   readonly risk: RiskLevel;
   readonly reason?: string;
+  readonly approvalContext?: ApprovalContext;
 }
 
 export interface ExecutionResult {
   success: boolean;
   output?: string;
   error?: string;
+  errorCode?: string;
 }
 
 // ─── Approval channel ─────────────────────────────────────────────────────────
@@ -78,6 +82,14 @@ function awaitApproval(request: ApprovalRequest): Promise<boolean> {
     pendingApprovals.set(request.id, resolve);
     // Non-null assertion: we just checked approvalHandler above
     approvalHandler!(request);
+
+    // Auto-deny after 60 seconds to prevent pipeline stalls
+    setTimeout(() => {
+      if (pendingApprovals.has(request.id)) {
+        console.warn(`[ToolExecutor] Approval timed out for request ${request.id}`);
+        resolveApproval(request.id, false);
+      }
+    }, 60000);
   });
 }
 
@@ -107,7 +119,10 @@ export const ToolExecutor = {
     tool: string,
     action: string,
     args: Record<string, unknown> = {},
-    commandStr?: string
+    commandStr?: string,
+    onStatusChange?: (status: 'WAITING_FOR_USER' | 'RUNNING') => Promise<void> | void,
+    executeImpl?: () => Promise<unknown>,
+    context?: any
   ): Promise<ExecutionResult> {
     const id = crypto.randomUUID();
     const start = performance.now();
@@ -124,16 +139,57 @@ export const ToolExecutor = {
       return {
         success: false,
         error: `[Rezel Security] Blocked: ${validation.reason ?? 'critical command pattern detected'}`,
+        errorCode: 'TOOL_INVALID_ARGUMENT'
       };
     }
 
-    // ── Step 2: PermissionManager — classify ──────────────────────────────────
+    // ── Step 2: PermissionManager & PolicyEngine (Dynamic Risk) ─────────────
     const { risk, alwaysConfirm } = PermissionManager.classify(tool, action);
     const preApproved = PermissionManager.isGranted(tool, action);
 
+    let dynamicRisk = risk;
+    let policyReason = validation.reason;
+    let approvalContext: ApprovalContext | undefined;
+    let policyRequiresApproval = false;
+
+    console.log('[ToolExecutor] context is:', !!context, context);
+
+    if (context) {
+      const policyCtx: PolicyEvaluationContext = {
+        capabilityId: action,
+        toolGroup: tool,
+        args,
+        workflowId: context.workflowId,
+        executionId: context.executionId,
+        activeScopes: context.scopes || []
+      };
+
+      const decision = await PolicyEngine.evaluate(policyCtx);
+      console.log('[ToolExecutor] Policy decision:', decision);
+
+      if (decision.decision === 'DENY') {
+        AuditLogger.record(tool, action, [args], 'CRITICAL', 'DENIED_BY_POLICY', {
+          reason: decision.reason,
+          durationMs: performance.now() - start,
+        });
+        return {
+          success: false,
+          error: `[Rezel Policy] Blocked: ${decision.reason}`,
+          errorCode: 'TOOL_PERMISSION_DENIED'
+        };
+      }
+
+      if (decision.decision === 'REQUIRE_APPROVAL') {
+        policyRequiresApproval = true;
+        approvalContext = decision.approvalContext;
+        dynamicRisk = decision.approvalContext?.risk || 'HIGH';
+      }
+      policyReason = decision.reason;
+    }
+
     // ── Step 3: Human confirmation ────────────────────────────────────────────
     const needsConfirmation =
-      (risk === 'HIGH' || risk === 'CRITICAL' || alwaysConfirm) && !preApproved;
+      (dynamicRisk === 'HIGH' || dynamicRisk === 'CRITICAL' || alwaysConfirm || policyRequiresApproval) && !preApproved;
 
     if (needsConfirmation) {
       const request: ApprovalRequest = {
@@ -142,41 +198,79 @@ export const ToolExecutor = {
         action,
         command: commandStr,
         args: Object.values(args),
-        risk,
-        reason: validation.reason,
+        risk: dynamicRisk,
+        reason: policyReason,
+        approvalContext
       };
 
+      await onStatusChange?.('WAITING_FOR_USER');
       const approved = await awaitApproval(request);
+      await onStatusChange?.('RUNNING');
 
       if (!approved) {
         AuditLogger.record(tool, action, [args], risk, 'DENIED_BY_USER', {
           durationMs: performance.now() - start,
         });
-        return { success: false, error: 'Action denied by user.' };
+        return { success: false, error: 'Action denied by user.', errorCode: 'TOOL_PERMISSION_DENIED' };
       }
     }
 
-    // ── Step 4: Invoke Tauri backend ──────────────────────────────────────────
+    // Check cancellation before invoking
+    const signal = context?.signal as AbortSignal | undefined;
+    if (signal?.aborted) {
+      return { success: false, error: 'Execution cancelled', errorCode: 'TOOL_CANCELLED' };
+    }
+
+    // ── Step 4: Invoke execution with timeout ─────────────────────────────────
     try {
-      const raw = await invoke<unknown>(action, args);
+      const timeoutMs = context?.timeoutMs ?? 60000;
+      
+      const executePromise = executeImpl ? executeImpl() : invoke<unknown>(action, args);
+      
+      let timeoutId: ReturnType<typeof setTimeout>;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('TOOL_TIMEOUT')), timeoutMs);
+      });
+
+      const cancelPromise = new Promise<never>((_, reject) => {
+        if (!signal) return;
+        const onAbort = () => reject(new Error('TOOL_CANCELLED'));
+        if (signal.aborted) onAbort();
+        signal.addEventListener('abort', onAbort, { once: true });
+      });
+
+      const raw = await Promise.race([executePromise, timeoutPromise, cancelPromise]).finally(() => {
+        clearTimeout(timeoutId);
+      });
+
       const durationMs = performance.now() - start;
 
-      AuditLogger.record(tool, action, [args], risk, 'ALLOWED', { durationMs });
+      AuditLogger.record(tool, action, [args], dynamicRisk, 'ALLOWED', { durationMs });
+
+      // If the AI updated the API key, force GeminiProvider to reload it
+      if (action === 'save_api_key' || action === 'delete_api_key') {
+        const { GeminiProvider } = await import('../ai/GeminiProvider');
+        GeminiProvider.clearApiKey();
+      }
 
       const output =
-        typeof raw === 'string' ? raw : JSON.stringify(raw, null, 2);
+        typeof raw === 'string' ? raw : (raw !== undefined ? JSON.stringify(raw, null, 2) : 'Success');
 
       return { success: true, output };
     } catch (err: unknown) {
       const durationMs = performance.now() - start;
       const errorMsg = err instanceof Error ? err.message : String(err);
+      
+      let errorCode = 'TOOL_EXECUTION_FAILED';
+      if (errorMsg === 'TOOL_TIMEOUT') errorCode = 'TOOL_TIMEOUT';
+      if (errorMsg === 'TOOL_CANCELLED') errorCode = 'TOOL_CANCELLED';
 
-      AuditLogger.record(tool, action, [args], risk, 'ERROR', {
+      AuditLogger.record(tool, action, [args], dynamicRisk, 'ERROR', {
         reason: errorMsg,
         durationMs,
       });
 
-      return { success: false, error: errorMsg };
+      return { success: false, error: errorMsg, errorCode };
     }
   },
 } as const;

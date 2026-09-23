@@ -1,0 +1,102 @@
+/**
+ * Rezel OS — Typography Tokens
+ * Single source of truth from DESIGN.md
+ */
+
+:root {
+  /* ── Font Families (Dual Typography Personalities) ─────────────────────── */
+  --rz-font-display: 'Space Grotesk', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --rz-font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --rz-font-sans: var(--rz-font-body);
+  --rz-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* ── Display / Identity Hierarchy ──────────────────────────────────────── */
+  --rz-text-display-hero: 36px;
+  --rz-text-display-hero-weight: 700;
+  --rz-text-display-hero-tracking: 0.14em;
+
+  --rz-text-display-title: 22px;
+  --rz-text-display-title-weight: 600;
+  --rz-text-display-title-tracking: 0.08em;
+
+  --rz-text-display-sub: 14px;
+  --rz-text-display-sub-weight: 500;
+  --rz-text-display-sub-tracking: 0.04em;
+
+  /* ── Technical UI & Monospace Hierarchy ────────────────────────────────── */
+  --rz-text-brand-size: 11px;
+  --rz-text-brand-weight: 700;
+  --rz-text-brand-tracking: 0.25em;
+
+  --rz-text-tech-label-size: 10px;
+  --rz-text-tech-label-weight: 600;
+  --rz-text-tech-label-tracking: 0.20em;
+  --rz-text-tech-label-transform: uppercase;
+
+  --rz-text-badge-size: 9px;
+  --rz-text-badge-weight: 600;
+  --rz-text-badge-tracking: 0.18em;
+
+  --rz-text-telemetry-size: 11px;
+  --rz-text-telemetry-weight: 400;
+  --rz-text-telemetry-tracking: 0.08em;
+  --rz-text-telemetry-font-variant: tabular-nums;
+
+  --rz-text-code-size: 11px;
+  --rz-text-code-line-height: 1.45;
+
+  /* ── Conversational & Body Hierarchy ───────────────────────────────────── */
+  --rz-text-body-size: 13px;
+  --rz-text-body-weight: 400;
+  --rz-text-body-line-height: 1.55;
+
+  --rz-text-body-compact-size: 12px;
+  --rz-text-body-compact-line-height: 1.45;
+
+  --rz-text-description-size: 11px;
+  --rz-text-description-weight: 400;
+  --rz-text-description-line-height: 1.40;
+
+  --rz-text-heading-size: 14px;
+  --rz-text-heading-weight: 600;
+  --rz-text-heading-tracking: 0.10em;
+
+  --rz-text-title-size: 16px;
+  --rz-text-title-weight: 600;
+  --rz-text-title-tracking: 0.08em;
+}
+
+/* Typography Utility Classes */
+.rz-font-display {
+  font-family: var(--rz-font-display);
+  letter-spacing: var(--rz-text-display-sub-tracking);
+}
+
+.rz-font-body {
+  font-family: var(--rz-font-body);
+}
+
+.rz-font-mono {
+  font-family: var(--rz-font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.rz-font-sans {
+  font-family: var(--rz-font-sans);
+}
+
+.rz-tech-label {
+  font-family: var(--rz-font-mono);
+  font-size: var(--rz-text-tech-label-size);
+  font-weight: var(--rz-text-tech-label-weight);
+  letter-spacing: var(--rz-text-tech-label-tracking);
+  text-transform: var(--rz-text-tech-label-transform);
+}
+
+.rz-telemetry {
+  font-family: var(--rz-font-mono);
+  font-size: var(--rz-text-telemetry-size);
+  font-weight: var(--rz-text-telemetry-weight);
+  letter-spacing: var(--rz-text-telemetry-tracking);
+  font-variant-numeric: tabular-nums;
+}

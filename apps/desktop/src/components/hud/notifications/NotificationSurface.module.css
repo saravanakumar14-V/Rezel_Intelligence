@@ -1,0 +1,141 @@
+﻿.surfaceContainer {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+/* ── Transient Capsule ───────────────────────────────────────────────────── */
+.transientCapsule {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 380px;
+  background: rgba(4, 14, 28, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.capsuleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sourceBadge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.06);
+  color: #7ECFFF;
+}
+
+.timeText {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.capsuleTitle {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+}
+
+.capsuleSummary {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: rgba(234, 251, 255, 0.75);
+  line-height: 1.4;
+}
+
+/* ── Severity Accents ────────────────────────────────────────────────────── */
+.severity-success {
+  border-color: rgba(0, 230, 118, 0.4);
+}
+.severity-warning {
+  border-color: rgba(255, 159, 28, 0.45);
+}
+.severity-recovery {
+  border-color: rgba(0, 229, 255, 0.45);
+}
+.severity-error {
+  border-color: rgba(255, 82, 82, 0.5);
+}
+.severity-critical {
+  border-color: rgba(255, 23, 68, 0.8);
+  box-shadow: 0 0 24px rgba(255, 23, 68, 0.35);
+}
+
+/* ── Persistent Attention Banner ─────────────────────────────────────────── */
+.persistentBanner {
+  pointer-events: auto;
+  min-width: 320px;
+  max-width: 420px;
+  background: rgba(20, 8, 12, 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.7);
+}
+
+.bannerTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.actionButton {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid #00E5FF;
+}

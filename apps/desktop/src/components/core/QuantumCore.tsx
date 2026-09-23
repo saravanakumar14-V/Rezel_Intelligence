@@ -1,106 +1,161 @@
-import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useEffect, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import EnergyRing from "./EnergyRing";
+import QuantumNucleus from "./QuantumNucleus";
+import ComputationLattice from "./ComputationLattice";
+import RefractiveHousing from "./RefractiveHousing";
+import QuantumWaveguides from "./QuantumWaveguides";
 import OrbitParticles from "./OrbitParticles";
+import CoreLight from "./CoreLight";
+import {
+  type CoreVisualState,
+  type SpectralLayerColors,
+  getSpectralPalette,
+  createInterpolatedSpectralState,
+  lerpSpectralState,
+  sampleAmbientIdleState,
+} from "./coreSpectralTheme";
+import { RezelDirector, type DirectorEvent } from "../../lib/director/RezelDirector";
+import { NotificationIntelligenceCenter } from "../../lib/notifications/NotificationIntelligenceCenter";
+import type { RezelNotificationEvent } from "../../lib/notifications/types";
+import { useHardware } from "../../providers/HardwareProvider";
+
+export { type CoreVisualState } from "./coreSpectralTheme";
 
 /**
  * QuantumCore
  *
- * The central visual identity of Rezel — a multi-layered animated energy core.
+ * Master orchestrator of the REZEL Core's multi-layered spectral visual identity.
  *
- * Layers (outer → inner):
- *  1. OrbitParticles  — swirling energy cloud
- *  2. Three EnergyRings — concentric tori on different axes
- *  3. Outer shell     — large low-poly icosahedron (wireframe, slow spin)
- *  4. Mid shell       — medium icosahedron (solid emissive, faster spin)
- *  5. Inner nucleus   — small sphere (peak emissive intensity, pulse)
+ * Architecture (Outer → Inner):
+ * 1. Multi-Spectral Orbital Particle Field (Stardust & Energy Sparks)
+ * 2. Harmonic Energy Waveguides (3-Plane Anisotropic Rings: Cyan, Violet, Azure)
+ * 3. Refractive Crystal Housing (PBR Confinement Vessel with Fresnel Rim)
+ * 4. Neural Tensor Computation Lattice (Counter-rotating Geodesic Wireframes)
+ * 5. Quantum Nucleus (Solid 24K Quantum Gold Jewel + Diamond White Singularity)
  *
- * Performance:
- *  - All geometry uses standard BufferGeometry (no dynamic updates)
- *  - Pulse driven by Math.sin — no extra allocations per frame
- *  - Additive blending on shell materials avoids depth-write overhead
+ * Ambient Idle Dual-State Energy Cycle:
+ *  - GOLDEN QUANTUM STATE (0s-4s) <-> COOL QUANTUM STATE (5s-9s)
+ *  - Real operational states (EXECUTING, THINKING, ERROR, ATTENTION, etc.) take strict priority.
  */
 export default function QuantumCore() {
-  const outerRef = useRef<THREE.Mesh>(null!);
-  const midRef   = useRef<THREE.Mesh>(null!);
-  const innerRef = useRef<THREE.Mesh>(null!);
-  const midMatRef = useRef<THREE.MeshStandardMaterial>(null!);
-  const innerMatRef = useRef<THREE.MeshStandardMaterial>(null!);
+  const groupRef = useRef<THREE.Group>(null!);
+  const { quality } = useHardware();
+  const { pointer } = useThree();
 
-  useFrame(({ clock }, delta) => {
-    const t = clock.elapsedTime;
+  const [coreState, setCoreState] = useState<CoreVisualState>('IDLE');
+  const targetSpectralRef = useRef<SpectralLayerColors>(getSpectralPalette('IDLE'));
+  const currentSpectralRef = useRef<SpectralLayerColors>(createInterpolatedSpectralState());
+  const idleTimerRef = useRef<number>(0);
 
-    // Outer shell — slow, stately rotation
-    outerRef.current.rotation.y += delta * 0.18;
-    outerRef.current.rotation.x += delta * 0.06;
+  // State Subscriptions & Priority Lifecycle
+  useEffect(() => {
+    const dirHandler = (event: DirectorEvent) => {
+      if (event.type === 'status_change' && event.payload?.status) {
+        const s = event.payload.status;
+        if (s === 'idle') setCoreState('IDLE');
+        else if (s === 'listening') setCoreState('LISTENING');
+        else if (s === 'thinking' || s === 'streaming') setCoreState('THINKING');
+        else if (s === 'tool_executing') setCoreState('EXECUTING');
+        else if (s === 'error') setCoreState('ERROR');
+      }
+      if (event.type === 'workflow_started') setCoreState('EXECUTING');
+      if (event.type === 'reasoning_workflow_completed') {
+        setCoreState('SUCCESS');
+        setTimeout(() => setCoreState('IDLE'), 3500);
+      }
+      if (event.type === 'reasoning_error') setCoreState('ERROR');
+    };
 
-    // Mid shell — faster counter-rotation
-    midRef.current.rotation.y -= delta * 0.45;
-    midRef.current.rotation.z += delta * 0.22;
+    const notifHandler = (events: RezelNotificationEvent[]) => {
+      const latest = events[events.length - 1];
+      if (!latest) return;
 
-    // Inner nucleus — fastest spin
-    innerRef.current.rotation.x += delta * 0.9;
-    innerRef.current.rotation.y += delta * 0.6;
+      if (latest.severity === 'ATTENTION' || latest.severity === 'WARNING') {
+        setCoreState('ATTENTION');
+        setTimeout(() => setCoreState('IDLE'), 4000);
+      } else if (latest.severity === 'RECOVERY') {
+        setCoreState('RECOVERY');
+        setTimeout(() => setCoreState('IDLE'), 3500);
+      } else if (latest.severity === 'CRITICAL' || latest.severity === 'ERROR') {
+        setCoreState('ERROR');
+        setTimeout(() => setCoreState('IDLE'), 4000);
+      }
+    };
 
-    // Emissive pulse — smooth sinusoidal breathing
-    const pulse = 2.5 + Math.sin(t * 1.8) * 1.2;
-    midMatRef.current.emissiveIntensity   = pulse * 0.6;
-    innerMatRef.current.emissiveIntensity = pulse * 1.5;
+    RezelDirector.subscribe(dirHandler);
+    const unsubNotif = NotificationIntelligenceCenter.subscribe(notifHandler);
+
+    return () => {
+      RezelDirector.unsubscribe(dirHandler);
+      unsubNotif();
+    };
+  }, []);
+
+  // Update target palette immediately when operational state changes
+  useEffect(() => {
+    if (coreState !== 'IDLE') {
+      targetSpectralRef.current = getSpectralPalette(coreState);
+    }
+  }, [coreState]);
+
+  useFrame((_, delta) => {
+    // 1. Dual-State Ambient Energy Cycle (IDLE only) vs Real Operational Priority
+    if (coreState === 'IDLE') {
+      idleTimerRef.current += delta;
+      sampleAmbientIdleState(targetSpectralRef.current, idleTimerRef.current);
+    }
+
+    // 2. Smooth cinematic multi-layer spectral interpolation
+    lerpSpectralState(currentSpectralRef.current, targetSpectralRef.current, Math.min(1.0, delta * 3.8));
+
+    // 3. Subtle pointer parallax tilt for organic depth
+    if (groupRef.current) {
+      const targetRotX = -pointer.y * 0.16;
+      const targetRotY = pointer.x * 0.22;
+      groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
+      groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
+    }
   });
 
+  const colors = currentSpectralRef.current;
+
   return (
-    <group>
-      {/* Orbit particle cloud */}
-      <OrbitParticles count={600} radius={2.8} speed={0.1} />
+    <>
+      {/* Dynamic Spectral Lighting */}
+      <CoreLight colors={colors} />
 
-      {/* Energy rings on three axes */}
-      <EnergyRing radius={1.9} tube={0.006} speed={0.7}  axis="y" color="#00E5FF" tiltX={Math.PI / 6} />
-      <EnergyRing radius={2.1} tube={0.005} speed={-0.5} axis="x" color="#7A5CFF" tiltZ={Math.PI / 5} />
-      <EnergyRing radius={2.4} tube={0.004} speed={0.35} axis="z" color="#00BFFF" tiltX={Math.PI / 3} />
+      <group ref={groupRef}>
+        {/* Layer 5: Multi-Spectral Orbital Particle Field */}
+        {quality !== 'LOW' && (
+          <OrbitParticles
+            count={quality === 'MED' ? 240 : 500}
+            radius={2.8}
+            speed={coreState === 'EXECUTING' ? 0.16 : 0.07}
+            colors={colors}
+          />
+        )}
 
-      {/* Outer wireframe shell */}
-      <mesh ref={outerRef}>
-        <icosahedronGeometry args={[1.45, 1]} />
-        <meshBasicMaterial
-          color="#00E5FF"
-          wireframe
-          transparent
-          opacity={0.18}
-          blending={THREE.AdditiveBlending}
-          depthWrite={false}
+        {/* Layer 4: Precision Harmonic Energy Waveguides (3 Distinct Spectral Rings) */}
+        <QuantumWaveguides
+          colors={colors}
         />
-      </mesh>
 
-      {/* Mid emissive shell */}
-      <mesh ref={midRef}>
-        <icosahedronGeometry args={[1.05, 4]} />
-        <meshStandardMaterial
-          ref={midMatRef}
-          color="#00C8F0"
-          emissive="#00E5FF"
-          emissiveIntensity={1.5}
-          metalness={0.9}
-          roughness={0.05}
-          transparent
-          opacity={0.55}
-          blending={THREE.AdditiveBlending}
-          depthWrite={false}
+        {/* Layer 3: Refractive Crystal Confinement Vessel */}
+        <RefractiveHousing
+          colors={colors}
         />
-      </mesh>
 
-      {/* Inner nucleus */}
-      <mesh ref={innerRef}>
-        <sphereGeometry args={[0.52, 32, 32]} />
-        <meshStandardMaterial
-          ref={innerMatRef}
-          color="#FFFFFF"
-          emissive="#00E5FF"
-          emissiveIntensity={4}
-          metalness={1}
-          roughness={0}
+        {/* Layer 2: Neural Tensor Computation Lattice (Inner Violet & Outer Matrix) */}
+        <ComputationLattice
+          colors={colors}
         />
-      </mesh>
-    </group>
+
+        {/* Layer 1: Inner Quantum Nucleus & Diamond White Singularity */}
+        <QuantumNucleus
+          colors={colors}
+        />
+      </group>
+    </>
   );
 }

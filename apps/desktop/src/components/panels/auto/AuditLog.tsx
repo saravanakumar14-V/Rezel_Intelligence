@@ -7,6 +7,7 @@ import type { RiskLevel } from '../../../lib/security/PermissionManager';
 const OUTCOME_STYLE: Record<AuditOutcome, { label: string; color: string }> = {
   ALLOWED:          { label: 'OK',      color: '#00FFAE' },
   DENIED_BY_USER:   { label: 'DENIED',  color: '#FF3D71' },
+  DENIED_BY_POLICY: { label: 'POLICY',  color: '#FF9F1C' },
   BLOCKED_CRITICAL: { label: 'BLOCKED', color: '#FF3D71' },
   BLOCKED_UNSAFE:   { label: 'UNSAFE',  color: '#FF9F1C' },
   ERROR:            { label: 'ERROR',   color: '#FF3D71' },

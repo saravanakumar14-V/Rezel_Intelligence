@@ -1,0 +1,417 @@
+/**
+ * REZEL NAVIGATION QUANTUMCORE 2.0 Stylesheet (Quiet Luxury Refinement)
+ * Strict pointer-events isolation: child rings & visual layers have pointer-events: none.
+ */
+
+.miniCoreContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(120px, 10.5vw, 154px);
+  height: clamp(120px, 10.5vw, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 12;
+  border-radius: 50%;
+  outline: none;
+  pointer-events: auto;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.4s ease,
+              opacity 0.4s ease;
+  user-select: none;
+}
+
+.miniCoreContainer:hover {
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.miniCoreContainer:focus-visible {
+  outline: 1.5px solid var(--core-accent, #00E5FF);
+  outline-offset: 8px;
+}
+
+/* Quieted state when surfaces are open to the right (retains orientation & slow activity) */
+.miniCoreQuieted {
+  opacity: 0.68;
+  transform: translate(-50%, -50%) scale(0.92);
+  filter: brightness(0.82) saturate(0.85);
+}
+
+.miniCoreQuieted:hover {
+  opacity: 0.95;
+  transform: translate(-50%, -50%) scale(0.98);
+  filter: brightness(1.05) saturate(1.1);
+}
+
+/* ── Restrained Volumetric Core Atmosphere ─────────────────────────────── */
+
+.coreAura {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--core-aura, rgba(0, 229, 255, 0.16)) 0%,
+    rgba(122, 92, 255, 0.04) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  animation: coreBreathe 5s ease-in-out infinite;
+  pointer-events: none !important;
+  transition: background 0.4s ease;
+}
+
+@keyframes coreBreathe {
+  0%, 100% { transform: scale(0.95); opacity: 0.45; }
+  50% { transform: scale(1.08); opacity: 0.8; }
+}
+
+/* ── Harmonic Waveguide Rings (3-Plane Anisotropic Waveguides) ─────────── */
+
+.waveguideRing {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none !important;
+  border: 1px solid var(--core-accent, #00E5FF);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease-out;
+}
+
+.ringOuter {
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  opacity: 0.55;
+  box-shadow: 0 0 10px var(--core-glow, rgba(0, 229, 255, 0.25));
+  animation: spinRingOuter 20s linear infinite;
+}
+
+.ringPolar {
+  width: 84%;
+  height: 84%;
+  border-style: dashed;
+  border-dasharray: 4 6;
+  border-color: var(--core-secondary, #7A5CFF);
+  opacity: 0.6;
+  animation: spinRingPolar 14s linear infinite reverse;
+}
+
+.ringAsym {
+  width: 70%;
+  height: 70%;
+  border-style: dotted;
+  border-color: #FFF4D6;
+  opacity: 0.7;
+  animation: spinRingAsym 16s linear infinite;
+}
+
+/* Degree Ticks on Outer Ring */
+.ringTicks {
+  position: absolute;
+  inset: 0;
+}
+
+.ringTicks span {
+  position: absolute;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: var(--core-accent, #00E5FF);
+  top: 50%;
+  left: 50%;
+  opacity: 0.75;
+}
+
+.tick0   { transform: translate(-50%, -50%) translateY(-50%) translateY(-2px); }
+.tick45  { transform: translate(-50%, -50%) rotate(45deg) translateY(-50%) translateY(-2px); }
+.tick90  { transform: translate(-50%, -50%) rotate(90deg) translateY(-50%) translateY(-2px); }
+.tick135 { transform: translate(-50%, -50%) rotate(135deg) translateY(-50%) translateY(-2px); }
+.tick180 { transform: translate(-50%, -50%) rotate(180deg) translateY(-50%) translateY(-2px); }
+.tick225 { transform: translate(-50%, -50%) rotate(225deg) translateY(-50%) translateY(-2px); }
+.tick270 { transform: translate(-50%, -50%) rotate(270deg) translateY(-50%) translateY(-2px); }
+.tick315 { transform: translate(-50%, -50%) rotate(315deg) translateY(-50%) translateY(-2px); }
+
+@keyframes spinRingOuter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinRingPolar {
+  from { transform: rotateX(65deg) rotateY(25deg) rotate(0deg); }
+  to { transform: rotateX(65deg) rotateY(25deg) rotate(360deg); }
+}
+
+@keyframes spinRingAsym {
+  from { transform: rotateX(-50deg) rotateZ(45deg) rotate(0deg); }
+  to { transform: rotateX(-50deg) rotateZ(45deg) rotate(360deg); }
+}
+
+/* ── Counter-Rotating Polyhedral Tensor Lattice ────────────────────────── */
+
+.tensorLattice {
+  position: absolute;
+  width: 54%;
+  height: 54%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none !important;
+  transition: transform 0.2s ease-out;
+}
+
+.latticeInner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--core-secondary, #7A5CFF);
+  transform: rotate(45deg);
+  opacity: 0.65;
+  animation: spinLatticeInner 9s linear infinite;
+}
+
+.latticeOuter {
+  position: absolute;
+  width: 86%;
+  height: 86%;
+  border: 1px solid var(--core-accent, #00E5FF);
+  transform: rotate(0deg);
+  opacity: 0.75;
+  animation: spinLatticeOuter 12s linear infinite reverse;
+}
+
+.latticeNode1, .latticeNode2, .latticeNode3, .latticeNode4,
+.latticeNodeA, .latticeNodeB, .latticeNodeC, .latticeNodeD {
+  position: absolute;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 4px #FFFFFF;
+  opacity: 0.85;
+}
+
+.latticeNode1 { top: -1.2px; left: -1.2px; }
+.latticeNode2 { top: -1.2px; right: -1.2px; }
+.latticeNode3 { bottom: -1.2px; right: -1.2px; }
+.latticeNode4 { bottom: -1.2px; left: -1.2px; }
+
+.latticeNodeA { top: -1.2px; left: -1.2px; }
+.latticeNodeB { top: -1.2px; right: -1.2px; }
+.latticeNodeC { bottom: -1.2px; right: -1.2px; }
+.latticeNodeD { bottom: -1.2px; left: -1.2px; }
+
+@keyframes spinLatticeInner {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinLatticeOuter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* ── Refractive Housing Vessel & Specular Glass Arc ─────────────────────── */
+
+.refractiveHousing {
+  position: relative;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(12, 24, 56, 0.96) 0%, rgba(2, 5, 16, 0.98) 100%);
+  border: 1px solid var(--core-accent, #00E5FF);
+  box-shadow: 0 0 16px var(--core-glow, rgba(0, 229, 255, 0.3)),
+              inset 0 0 10px rgba(255, 179, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none !important;
+  transition: transform 0.2s ease-out;
+}
+
+.fresnelRim {
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none !important;
+}
+
+.specularLightArc {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 42%;
+  height: 28%;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+  filter: blur(0.3px);
+  pointer-events: none !important;
+}
+
+/* ── 24K Gold Quantum Nucleus + Diamond White Singularity ──────────────── */
+
+.quantumNucleus {
+  width: 56%;
+  height: 56%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFF8E1 0%, #FFB300 55%, #E65100 100%);
+  box-shadow: 0 0 12px #FFB300, 0 0 20px rgba(255, 143, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: nucleusPulse 3.8s ease-in-out infinite;
+  pointer-events: none !important;
+}
+
+.nucleusInnerGlow {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFFFFF 0%, #FFE082 60%, transparent 100%);
+  opacity: 0.75;
+}
+
+@keyframes nucleusPulse {
+  0%, 100% { transform: scale(0.94); opacity: 0.9; }
+  50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 8px #FFE082); }
+}
+
+.singularity {
+  width: 32%;
+  height: 32%;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 8px #FFFFFF, 0 0 16px #FFFFFF;
+  position: relative;
+  z-index: 2;
+  pointer-events: none !important;
+}
+
+/* ── Restrained Orbital Particle Field Drift (4 subtle motes) ───────────── */
+
+.orbitalParticleField {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none !important;
+  animation: orbitFieldSpin 22s linear infinite;
+}
+
+@keyframes orbitFieldSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.orbitSpark {
+  position: absolute;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: var(--core-accent, #00E5FF);
+  box-shadow: 0 0 4px var(--core-accent, #00E5FF);
+  pointer-events: none !important;
+}
+
+.spark1 { top: 12%; left: 24%; opacity: 0.75; }
+.spark2 { top: 80%; left: 78%; opacity: 0.65; background: #FFB300; box-shadow: 0 0 4px #FFB300; }
+.spark3 { top: 82%; left: 18%; opacity: 0.65; }
+.spark4 { top: 16%; left: 80%; opacity: 0.75; background: var(--core-secondary, #7A5CFF); box-shadow: 0 0 4px var(--core-secondary, #7A5CFF); }
+
+/* ── Origin Micro Badge ────────────────────────────────────────────────── */
+
+.originMicroBadge {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(4, 10, 26, 0.82);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-family: var(--rz-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--core-accent, #00E5FF);
+  opacity: 0.65;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.miniCoreContainer:hover .originMicroBadge {
+  opacity: 0.95;
+  border-color: var(--core-accent, #00E5FF);
+}
+
+/* ── Domain Spectral Resonance Modes (Restrained Lighting) ─────────────── */
+
+.accentIdle {
+  --core-accent: #00E5FF;
+  --core-secondary: #7A5CFF;
+  --core-glow: rgba(0, 229, 255, 0.28);
+  --core-aura: rgba(0, 229, 255, 0.16);
+}
+
+.accentCreate {
+  --core-accent: #FFB300;
+  --core-secondary: #FFF8E1;
+  --core-glow: rgba(255, 179, 0, 0.35);
+  --core-aura: rgba(255, 179, 0, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.accentConverse {
+  --core-accent: #7ECFFF;
+  --core-secondary: #E0F7FA;
+  --core-glow: rgba(126, 207, 255, 0.35);
+  --core-aura: rgba(126, 207, 255, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.accentAutomate {
+  --core-accent: #00E676;
+  --core-secondary: #B9F6CA;
+  --core-glow: rgba(0, 230, 118, 0.35);
+  --core-aura: rgba(0, 230, 118, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.accentAnalyze {
+  --core-accent: #00E5FF;
+  --core-secondary: #E0F7FA;
+  --core-glow: rgba(0, 229, 255, 0.35);
+  --core-aura: rgba(0, 229, 255, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.accentInspect {
+  --core-accent: #9D4EDD;
+  --core-secondary: #F3E5F5;
+  --core-glow: rgba(157, 78, 221, 0.35);
+  --core-aura: rgba(157, 78, 221, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.accentControl {
+  --core-accent: #7A5CFF;
+  --core-secondary: #EDE7F6;
+  --core-glow: rgba(122, 92, 255, 0.35);
+  --core-aura: rgba(122, 92, 255, 0.20);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coreAura,
+  .ringOuter,
+  .ringPolar,
+  .ringAsym,
+  .latticeInner,
+  .latticeOuter,
+  .quantumNucleus,
+  .orbitalParticleField {
+    animation: none !important;
+  }
+}

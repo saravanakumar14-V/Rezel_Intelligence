@@ -207,9 +207,15 @@ export default function PermissionConfirmModal({
 
         {/* ── Details ─────────────────────────────────────────────────── */}
         <div className="flex flex-col gap-3">
-          <DetailRow label="TOOL"   value={request.tool}   />
-          <DetailRow label="ACTION" value={request.action} />
-          {request.command && (
+          {request.approvalContext ? (
+            <DetailRow label="INTENT" value={request.approvalContext.message} />
+          ) : (
+            <>
+              <DetailRow label="TOOL"   value={request.tool}   />
+              <DetailRow label="ACTION" value={request.action} />
+            </>
+          )}
+          {request.command && !request.approvalContext && (
             <DetailRow label="COMMAND" value={request.command} mono />
           )}
           {request.reason && (

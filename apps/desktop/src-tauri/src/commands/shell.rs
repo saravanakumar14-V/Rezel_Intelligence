@@ -1,5 +1,5 @@
-use std::process::Command;
 use log::info;
+use tokio::process::Command;
 
 /// Commands permitted to execute via `run_system_command`.
 ///
@@ -33,27 +33,45 @@ pub struct CommandOutput {
 ///
 /// Returns a `CommandOutput` struct — never panics, never executes unlisted commands.
 #[tauri::command]
-pub fn run_system_command(command: String, args: Vec<String>) -> Result<CommandOutput, String> {
+pub async fn run_system_command(
+    command: String,
+    args: Option<Vec<String>>,
+) -> Result<CommandOutput, String> {
     let cmd_normalized = command.trim().to_lowercase();
+    let mut matched_cmd = None;
 
-    if !ALLOWLIST.iter().any(|&allowed| allowed == cmd_normalized) {
-        return Err(format!(
-            "[Rezel] Command '{}' is not in the Rust-side allowlist.",
-            command
-        ));
+    for &allowed in ALLOWLIST {
+        if allowed == cmd_normalized {
+            matched_cmd = Some(allowed);
+            break;
+        }
     }
 
-    info!("[shell] execute: {} {:?}", command, args);
+    let cmd_to_run = match matched_cmd {
+        Some(c) => c,
+        None => {
+            return Err(format!(
+                "[Rezel] Command '{}' is not in the Rust-side allowlist.",
+                command
+            ));
+        }
+    };
 
-    let output = Command::new(&command)
-        .args(&args)
+    let args_vec = args.unwrap_or_default();
+    info!("[shell] execute: {} {:?}", cmd_to_run, args_vec);
+
+    let output = Command::new(cmd_to_run)
+        .args(&args_vec)
         .output()
-        .map_err(|e| format!("Failed to spawn '{}': {}", command, e))?;
+        .await
+        .map_err(|e| format!("Failed to spawn '{}': {}", cmd_to_run, e))?;
 
     Ok(CommandOutput {
         stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
         stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
         success: output.status.success(),
-        command: format!("{} {}", command, args.join(" ")),
+        command: format!("{} {}", command, args_vec.join(" "))
+            .trim()
+            .to_string(),
     })
 }

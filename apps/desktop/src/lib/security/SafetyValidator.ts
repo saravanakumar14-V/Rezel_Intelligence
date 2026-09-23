@@ -24,9 +24,9 @@ const DANGER_PATTERNS: ReadonlyArray<{
   reason: string;
 }> = [
   // Windows — irreversibly destructive
-  { pattern: /rm\s+-[rR][fF]|del\s+\/[fsqFSQ]/,     risk: 'CRITICAL', reason: 'Recursive/force delete detected' },
-  { pattern: /format\s+[a-zA-Z]:/,                    risk: 'CRITICAL', reason: 'Drive format command detected' },
-  { pattern: /shutdown\s*\/[srhSRH]/,                 risk: 'CRITICAL', reason: 'System shutdown/reboot detected' },
+  { pattern: /rm\s+-[rR][fF]|del\s+\/[fsqFSQ]/i,    risk: 'CRITICAL', reason: 'Recursive/force delete detected' },
+  { pattern: /format\s+[a-zA-Z]:/i,                   risk: 'CRITICAL', reason: 'Drive format command detected' },
+  { pattern: /shutdown\s*\/[srhSRH]/i,                risk: 'CRITICAL', reason: 'System shutdown/reboot detected' },
   { pattern: /reg\s+delete/i,                         risk: 'CRITICAL', reason: 'Registry deletion detected' },
   { pattern: /cipher\s*\/w/i,                         risk: 'CRITICAL', reason: 'Disk wipe command detected' },
   { pattern: /rd\s+\/s\s+\/q/i,                       risk: 'CRITICAL', reason: 'Silent recursive directory removal detected' },

@@ -1,0 +1,376 @@
+/**
+ * Rezel OS — CreatorAutomationHUD CSS Module
+ * B1 token-integrated workflow timeline and verification HUD
+ */
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rz-space-3, 12px);
+  padding: var(--rz-space-4, 16px);
+  background: var(--rz-bg-glass-elevated, rgba(13, 21, 54, 0.92));
+  backdrop-filter: var(--rz-glass-backdrop, blur(16px) saturate(180%));
+  -webkit-backdrop-filter: var(--rz-glass-backdrop, blur(16px) saturate(180%));
+  border: var(--rz-border-hairline, 1px solid rgba(0, 229, 255, 0.18));
+  border-radius: var(--rz-radius-xl, 12px);
+  box-shadow: var(--rz-glass-shadow-elevated, 0 16px 48px 0 rgba(0, 0, 0, 0.85));
+  width: 100%;
+  max-width: 480px;
+  pointer-events: auto;
+  user-select: none;
+  transition: border-color var(--rz-duration-panel, 350ms) var(--rz-ease-standard),
+              box-shadow var(--rz-duration-panel, 350ms) var(--rz-ease-standard);
+}
+
+.creatorThemed {
+  border-color: rgba(179, 136, 255, 0.35);
+  box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.85), 0 0 24px rgba(179, 136, 255, 0.15);
+}
+
+/* ── HUD Header ─────────────────────────────────────────────────────────── */
+
+.hudHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rz-border-color-subtle, rgba(255, 255, 255, 0.08));
+  padding-bottom: var(--rz-space-2, 8px);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--rz-space-2, 8px);
+}
+
+.modeBadge {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-badge-size, 9px);
+  font-weight: var(--rz-text-badge-weight, 600);
+  letter-spacing: var(--rz-text-badge-tracking, 0.18em);
+  color: var(--rz-accent-creator-purple, #B388FF);
+  padding: 2px 6px;
+  background: rgba(179, 136, 255, 0.12);
+  border: 1px solid rgba(179, 136, 255, 0.25);
+  border-radius: var(--rz-radius-sm, 4px);
+  text-transform: uppercase;
+}
+
+.workflowGoal {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rz-text-primary, #EAFBFF);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--rz-space-2, 8px);
+}
+
+.appBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 2px 6px;
+  border-radius: var(--rz-radius-sm, 4px);
+  text-transform: uppercase;
+}
+
+.appBadgeConnected {
+  color: var(--rz-state-success-verified, #00E676);
+  background: var(--rz-workflow-verified-bg, rgba(0, 230, 118, 0.12));
+  border: 1px solid rgba(0, 230, 118, 0.25);
+}
+
+.appBadgeDisconnected {
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.dotConnected {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: var(--rz-state-success-verified, #00E676);
+  box-shadow: 0 0 6px var(--rz-state-success-verified, #00E676);
+}
+
+.dotDisconnected {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--rz-radius-full, 9999px);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.backgroundCount {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--rz-accent-cyan-core, #00E5FF);
+  padding: 2px 4px;
+  background: rgba(0, 229, 255, 0.10);
+  border-radius: var(--rz-radius-sm, 4px);
+}
+
+/* ── Progress Counter & Status Strip ────────────────────────────────────── */
+
+.statusStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progressCounter {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--rz-text-telemetry-size, 11px);
+  letter-spacing: var(--rz-text-telemetry-tracking, 0.08em);
+  color: var(--rz-text-secondary, #7ECFFF);
+  font-variant-numeric: tabular-nums;
+}
+
+.statusPill {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--rz-radius-full, 9999px);
+}
+
+.statusPill-running {
+  color: var(--rz-workflow-running, #00E5FF);
+  background: var(--rz-workflow-running-bg, rgba(0, 229, 255, 0.12));
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.statusPill-succeeded {
+  color: var(--rz-workflow-verified, #00E676);
+  background: var(--rz-workflow-verified-bg, rgba(0, 230, 118, 0.12));
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.statusPill-failed {
+  color: var(--rz-workflow-failed, #FF5252);
+  background: var(--rz-workflow-failed-bg, rgba(255, 82, 82, 0.15));
+  border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+.statusPill-recovery_required {
+  color: var(--rz-workflow-recovery, #E040FB);
+  background: var(--rz-workflow-recovery-bg, rgba(224, 64, 251, 0.15));
+  border: 1px solid rgba(224, 64, 251, 0.3);
+}
+
+/* ── Linear Step Timeline ───────────────────────────────────────────────── */
+
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rz-space-2, 8px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.timelineItem {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rz-space-3, 12px);
+  padding: 6px 10px;
+  background: var(--rz-bg-surface-subtle, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--rz-border-color-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--rz-radius-lg, 8px);
+  transition: background var(--rz-duration-micro, 150ms) var(--rz-ease-standard),
+              border-color var(--rz-duration-fast, 250ms) var(--rz-ease-standard);
+}
+
+.timelineItemActive {
+  background: rgba(0, 229, 255, 0.06);
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.10);
+}
+
+/* Timeline Node & Connector */
+.nodeWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+}
+
+.stepNode {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--rz-radius-full, 9999px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* State-Specific Node Visuals */
+.node-pending {
+  background: rgba(255, 255, 255, 0.20);
+  border: 1px dashed rgba(255, 255, 255, 0.40);
+}
+
+.node-running {
+  background: var(--rz-accent-cyan-core, #00E5FF);
+  box-shadow: 0 0 10px var(--rz-accent-cyan-core, #00E5FF);
+}
+
+.spinnerRing {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px dashed var(--rz-accent-cyan-core, #00E5FF);
+  border-radius: var(--rz-radius-full, 9999px);
+  animation: spin-clockwise 2s linear infinite;
+}
+
+@keyframes spin-clockwise {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.node-succeeded {
+  background: var(--rz-state-success-verified, #00E676);
+  box-shadow: 0 0 8px var(--rz-state-success-verified, #00E676);
+}
+
+.node-failed {
+  background: var(--rz-state-danger-error, #FF5252);
+  box-shadow: 0 0 8px var(--rz-state-danger-error, #FF5252);
+}
+
+.node-cancelled {
+  background: rgba(255, 255, 255, 0.30);
+}
+
+.node-unknown {
+  background: var(--rz-state-warning-unknown, #FFD700);
+  box-shadow: 0 0 8px var(--rz-state-warning-unknown, #FFD700);
+}
+
+.node-recovery_required {
+  background: var(--rz-workflow-recovery, #E040FB);
+  box-shadow: 0 0 8px var(--rz-workflow-recovery, #E040FB);
+}
+
+/* Step Content Body */
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.stepTitle {
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--rz-text-primary, #EAFBFF);
+}
+
+.stepCapability {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  color: var(--rz-accent-ice-blue, #7ECFFF);
+  opacity: 0.85;
+}
+
+.stepArgsPreview {
+  font-family: var(--rz-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  color: var(--rz-text-muted, rgba(234, 251, 255, 0.55));
+  background: rgba(0, 0, 0, 0.25);
+  padding: 2px 6px;
+  border-radius: var(--rz-radius-sm, 4px);
+  margin-top: 2px;
+  word-break: break-all;
+}
+
+/* ── Verification Badge & Reason ────────────────────────────────────────── */
+
+.verificationBlock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  padding: 3px 6px;
+  border-radius: var(--rz-radius-sm, 4px);
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.verif-verified {
+  color: var(--rz-state-success-verified, #00E676);
+  background: rgba(0, 230, 118, 0.08);
+  border: 1px solid rgba(0, 230, 118, 0.20);
+}
+
+.verif-not_verified {
+  color: var(--rz-state-warning-unknown, #FFD700);
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.20);
+}
+
+.verif-unknown {
+  color: #FFA000;
+  background: rgba(255, 160, 0, 0.08);
+  border: 1px solid rgba(255, 160, 0, 0.20);
+}
+
+.verif-failed {
+  color: var(--rz-state-danger-error, #FF5252);
+  background: rgba(255, 82, 82, 0.08);
+  border: 1px solid rgba(255, 82, 82, 0.20);
+}
+
+/* ── Sanitized Error Banner ─────────────────────────────────────────────── */
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--rz-workflow-failed-bg, rgba(255, 82, 82, 0.15));
+  border: 1px solid rgba(255, 82, 82, 0.35);
+  border-radius: var(--rz-radius-md, 6px);
+  color: var(--rz-state-danger-error, #FF5252);
+  font-family: var(--rz-font-sans, system-ui, sans-serif);
+  font-size: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .spinnerRing {
+    animation: none !important;
+  }
+}

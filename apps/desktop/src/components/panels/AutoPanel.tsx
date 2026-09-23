@@ -1,13 +1,16 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { Send, Square, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { ChevronDown, ChevronUp, Layers, Wrench, ShieldCheck } from 'lucide-react';
 import PanelShell from './PanelShell';
 import ToolCard from './auto/ToolCard';
 import AuditLog from './auto/AuditLog';
+import AutonomySessionCard from './auto/AutonomySessionCard';
+import SpatialWorkflowGraph from '../hud/SpatialWorkflowGraph';
 import { ToolRegistry } from '../../lib/ai/ToolRegistry';
-import { Planner } from '../../lib/ai/Planner';
 import { AgentCore } from '../../lib/ai/AgentCore';
-import type { PlanStep } from '../../lib/ai/types';
-import type { PlanEvent } from '../../lib/ai/Planner';
+import { WorkflowRuntime } from '../../lib/ai/WorkflowRuntime';
+import type { PlanEvent } from '../../lib/ai/PlanStateMachine';
+import type { PlanStep, Workflow } from '../../lib/ai/types';
+import type { AgentEvent } from '../../lib/ai/AgentCore';
 import type { ToolDefinition } from '../../lib/ai/types';
 
 // ─── Status labels ────────────────────────────────────────────────────────────
@@ -23,138 +26,142 @@ const STATUS_STYLE: Record<AutoStatus, { label: string; color: string }> = {
   cancelled:  { label: 'CANCELLED',  color: '#FF9F1C' },
 };
 
-const STEP_COLOR: Record<string, string> = {
-  pending:   '#4BB8F0',
-  running:   '#00E5FF',
-  completed: '#00FFAE',
-  failed:    '#FF3D71',
-  skipped:   '#FF9F1C',
-};
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
-/**
- * AutoPanel
- *
- * Automation operations console exposing:
- *  1. Registered tools (from ToolRegistry)
- *  2. Active task/plan execution with step progress
- *  3. Audit history (from AuditLogger)
- *
- * Execution flow:
- *  Task input → AgentCore.send() → AI generates plan → Planner.execute()
- *  → AIToolExecutor → SecurityToolExecutor → full security pipeline
- *
- * The panel never bypasses the security layer.
- */
 export default function AutoPanel() {
   // ── Tool registry ─────────────────────────────────────────────────────────
   const tools = useMemo<ToolDefinition[]>(() => ToolRegistry.getAll(), []);
 
-  // ── Task state ────────────────────────────────────────────────────────────
-  const [taskInput, setTaskInput] = useState('');
+  // ── Active Workflow & Plan state ──────────────────────────────────────────
   const [status, setStatus] = useState<AutoStatus>('idle');
-  const [steps, setSteps] = useState<PlanStep[]>([]);
+  const [activeWorkflow, setActiveWorkflow] = useState<Workflow | null>(() => {
+    const active = WorkflowRuntime.listActive();
+    if (active.length > 0) return active[0];
+    const recent = WorkflowRuntime.listRecent();
+    return recent.length > 0 ? recent[0] : null;
+  });
+  const [steps, setSteps] = useState<PlanStep[]>(() => activeWorkflow?.plan?.steps || []);
   const [auditRefreshKey, setAuditRefreshKey] = useState(0);
-  const abortRef = useRef(false);
 
   // ── Section collapse ──────────────────────────────────────────────────────
   const [toolsOpen, setToolsOpen] = useState(false);
-  const [auditOpen, setAuditOpen] = useState(true);
+  const [auditOpen, setAuditOpen] = useState(false);
 
-  // ── Planner event handler ─────────────────────────────────────────────────
+  // ── Sync Active Workflow from WorkflowRuntime ─────────────────────────────
+  const syncWorkflow = useCallback(() => {
+    const active = WorkflowRuntime.listActive();
+    if (active.length > 0) {
+      setActiveWorkflow(active[0]);
+      setSteps(active[0].plan?.steps || []);
+      setStatus(
+        active[0].status === 'RUNNING' || active[0].status === 'WAITING_FOR_USER'
+          ? 'executing'
+          : active[0].status === 'SUCCEEDED'
+          ? 'completed'
+          : active[0].status === 'FAILED'
+          ? 'failed'
+          : 'cancelled'
+      );
+    } else {
+      const recent = WorkflowRuntime.listRecent();
+      if (recent.length > 0) {
+        setActiveWorkflow(recent[0]);
+        setSteps(recent[0].plan?.steps || []);
+      }
+    }
+  }, []);
+
+  // ── AgentCore event handler ───────────────────────────────────────────────
   useEffect(() => {
-    const handler = (event: PlanEvent) => {
-      if (event.type === 'step_start' || event.type === 'step_complete' ||
-          event.type === 'step_failed' || event.type === 'step_skipped') {
-        // Update step statuses from the plan
-        setSteps((prev) => prev.map((s) => {
-          if (s.id === event.stepId) {
-            return {
-              ...s,
-              status: event.type === 'step_start' ? 'running'
-                : event.type === 'step_complete' ? 'completed'
-                : event.type === 'step_failed' ? 'failed'
-                : 'skipped',
-              result: event.result,
-              error: event.error,
-            };
-          }
-          return s;
-        }));
+    const handler = (event: AgentEvent) => {
+      if (event.type === 'stream_tool_call' && event.toolCall) {
+        if (event.toolCall.name !== 'create_workflow_plan') {
+          setSteps((prev) => [
+            ...prev,
+            {
+              id: event.toolCall!.id,
+              description: `Executing ${event.toolCall!.name}`,
+              status: 'RUNNING',
+              attempts: 1,
+              toolName: event.toolCall!.name,
+              toolArgs: event.toolCall!.args,
+            },
+          ]);
+          setStatus('executing');
+        }
       }
 
-      if (event.type === 'plan_complete') {
-        setStatus('completed');
+      if (event.type === 'stream_tool_result' && event.toolResult) {
+        if (event.toolResult.name !== 'create_workflow_plan') {
+          setSteps((prev) =>
+            prev.map((s) => {
+              if (s.toolName === event.toolResult!.name && s.status === 'RUNNING') {
+                return {
+                  ...s,
+                  status: event.toolResult!.success ? 'COMPLETED' : 'FAILED',
+                  result: event.toolResult!.success ? event.toolResult!.output : undefined,
+                  error: !event.toolResult!.success ? event.toolResult!.output : undefined,
+                };
+              }
+              return s;
+            })
+          );
+        }
         setAuditRefreshKey((k) => k + 1);
       }
-      if (event.type === 'plan_failed') {
+
+      if (event.type === 'stream_error') {
         setStatus('failed');
-        setAuditRefreshKey((k) => k + 1);
       }
     };
 
-    Planner.setEventHandler(handler);
-    return () => Planner.setEventHandler(null);
+    AgentCore.addEventHandler(handler);
+    return () => AgentCore.removeEventHandler(handler);
   }, []);
 
-  // ── Run task ──────────────────────────────────────────────────────────────
-
-  const runTask = useCallback(async () => {
-    const goal = taskInput.trim();
-    if (!goal || status === 'executing' || status === 'planning') return;
-
-    setStatus('planning');
-    abortRef.current = false;
-    setSteps([]);
-
-    try {
-      // Use AgentCore to send the task — the AI will decide tool usage
-      const response = await AgentCore.send(goal);
-
-      if (abortRef.current) {
-        setStatus('cancelled');
-        return;
-      }
-
-      // Check if a plan was generated or it was a direct response
-      // For now, display the result as completed
-      setStatus('completed');
+  // ── WorkflowRuntime event handler ─────────────────────────────────────────
+  useEffect(() => {
+    const handler = (_event: PlanEvent) => {
+      syncWorkflow();
       setAuditRefreshKey((k) => k + 1);
+    };
 
-      if (response) {
-        // No-op: response was handled through the existing event system
-      }
-    } catch (err: unknown) {
-      if (!abortRef.current) {
-        setStatus('failed');
-      }
-      console.error('[AutoPanel] Task failed:', err);
+    WorkflowRuntime.addEventHandler(handler);
+    syncWorkflow();
+    return () => WorkflowRuntime.removeEventHandler(handler);
+  }, [syncWorkflow]);
+
+  const handleExplainStep = useCallback(async (step: PlanStep) => {
+    try {
+      await AgentCore.send(`Explain workflow step: "${step.description}" and its current status (${step.status}).`);
+    } catch (err) {
+      console.error('Failed to explain step:', err);
     }
-  }, [taskInput, status]);
-
-  // ── Cancel ────────────────────────────────────────────────────────────────
-
-  const cancelTask = useCallback(() => {
-    abortRef.current = true;
-    AgentCore.abort();
-    setStatus('cancelled');
   }, []);
-
-  // ── Keyboard handler ──────────────────────────────────────────────────────
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        runTask();
-      }
-    },
-    [runTask],
-  );
 
   const isActive = status === 'planning' || status === 'executing';
   const statusStyle = STATUS_STYLE[status];
+
+  // Synthesize a fallback workflow object if executing direct tools without a plan
+  const syntheticWorkflow: Workflow | null = useMemo(() => {
+    if (activeWorkflow) return activeWorkflow;
+    if (steps.length === 0) return null;
+    const nowIso = new Date().toISOString();
+    return {
+      id: 'active-session-flow',
+      status: isActive ? 'RUNNING' : 'SUCCEEDED',
+      createdAt: nowIso,
+      updatedAt: nowIso,
+      plan: {
+        id: 'synthetic-plan',
+        goal: 'Active Agent Execution Stream',
+        steps,
+        status: isActive ? 'RUNNING' : 'SUCCEEDED',
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      },
+    };
+  }, [activeWorkflow, steps, isActive]);
 
   return (
     <PanelShell
@@ -162,112 +169,86 @@ export default function AutoPanel() {
       subtitle={statusStyle.label}
     >
       <div className="flex flex-col gap-4 h-full">
+        {/* ── Status Indicator ─────────────────────────────────────────── */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{
+                background: statusStyle.color,
+                boxShadow: isActive ? `0 0 8px ${statusStyle.color}` : 'none',
+                animation: isActive ? 'rezel-orb-pulse 1.5s ease-in-out infinite' : 'none',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '10px',
+                letterSpacing: '0.14em',
+                color: statusStyle.color,
+                fontWeight: 700,
+              }}
+            >
+              {statusStyle.label}
+            </span>
+          </div>
 
-        {/* ── Status indicator ─────────────────────────────────────────── */}
-        <div className="flex items-center gap-2">
-          <div
-            className="w-1.5 h-1.5 rounded-full"
-            style={{
-              background: statusStyle.color,
-              boxShadow: isActive ? `0 0 6px ${statusStyle.color}` : 'none',
-              animation: isActive ? 'rezel-orb-pulse 1.5s ease-in-out infinite' : 'none',
-            }}
-          />
           <span
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '9px',
-              letterSpacing: '0.14em',
-              color: statusStyle.color,
-              opacity: 0.7,
+              color: '#7ECFFF',
+              opacity: 0.5,
+              letterSpacing: '0.08em',
             }}
           >
-            {statusStyle.label}
+            LIVING EXECUTION ENGINE
           </span>
         </div>
 
-        {/* ── Task input ───────────────────────────────────────────────── */}
-        <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg"
-          style={{
-            background: 'rgba(2,6,18,0.60)',
-            border: '1px solid rgba(0,229,255,0.10)',
-          }}
-        >
-          <input
-            type="text"
-            value={taskInput}
-            onChange={(e) => setTaskInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Describe a task..."
-            disabled={isActive}
-            className="flex-1 outline-none bg-transparent"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '12px',
-              color: '#EAFBFF',
-              opacity: isActive ? 0.4 : 1,
-            }}
-          />
-          {isActive ? (
-            <button
-              onClick={cancelTask}
-              aria-label="Cancel task"
-              className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md cursor-pointer transition-opacity hover:opacity-80 active:scale-95"
-              style={{
-                background: 'rgba(255,61,113,0.12)',
-                border: '1px solid rgba(255,61,113,0.30)',
-              }}
-            >
-              <Square size={12} color="#FF3D71" strokeWidth={2} />
-            </button>
+        {/* ── Scrollable Living Graph & Sections ────────────────────────── */}
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 pr-1">
+          {/* Autonomous Execution & Safety Observability Card */}
+          <AutonomySessionCard />
+
+          {/* Spatial Living Execution Graph */}
+          {syntheticWorkflow ? (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 opacity-60">
+                <Layers size={11} className="text-[#00E5FF]" />
+                <span
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '8.5px',
+                    letterSpacing: '0.14em',
+                    color: '#00E5FF',
+                  }}
+                  className="uppercase"
+                >
+                  Active Task Graph
+                </span>
+              </div>
+              <SpatialWorkflowGraph
+                workflow={syntheticWorkflow}
+                onExplainStep={handleExplainStep}
+              />
+            </div>
           ) : (
-            <button
-              onClick={runTask}
-              disabled={!taskInput.trim()}
-              aria-label="Run task"
-              className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md cursor-pointer transition-all active:scale-95"
-              style={{
-                background: taskInput.trim() ? 'rgba(0,229,255,0.12)' : 'transparent',
-                border: taskInput.trim()
-                  ? '1px solid rgba(0,229,255,0.30)'
-                  : '1px solid rgba(255,255,255,0.08)',
-                opacity: taskInput.trim() ? 1 : 0.3,
-                cursor: taskInput.trim() ? 'pointer' : 'default',
-              }}
-            >
-              <Send size={12} color={taskInput.trim() ? '#00E5FF' : '#7ECFFF'} strokeWidth={2} />
-            </button>
+            <div className="flex flex-col items-center justify-center p-6 rounded-xl border border-white/5 bg-[#060B1E]/40 text-center gap-2">
+              <Layers size={20} className="text-[#7ECFFF]/30" />
+              <span className="font-mono text-xs text-[#7ECFFF]/60 tracking-wider">
+                NO ACTIVE WORKFLOW
+              </span>
+              <span className="text-[11px] text-white/30 max-w-[220px]">
+                Ask Rezel to automate tasks across Blender, files, or system tools.
+              </span>
+            </div>
           )}
-        </div>
 
-        {/* ── Active plan steps ─────────────────────────────────────────── */}
-        {steps.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '8px',
-                letterSpacing: '0.16em',
-                color: '#00E5FF',
-                opacity: 0.5,
-              }}
-              className="uppercase"
-            >
-              EXECUTION PLAN
-            </span>
-            {steps.map((step, i) => (
-              <StepRow key={step.id} step={step} index={i} />
-            ))}
-          </div>
-        )}
-
-        {/* ── Scrollable area for collapsible sections ──────────────────── */}
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3">
-
-          {/* ── Tools section (collapsible) ───────────────────────────── */}
+          {/* ── Registered Capabilities Section ──────────────────────────── */}
           <CollapsibleSection
-            title={`CAPABILITIES (${tools.length})`}
+            title={`CAPABILITIES & TOOLS (${tools.length})`}
+            icon={<Wrench size={11} className="text-[#7ECFFF]" />}
             isOpen={toolsOpen}
             onToggle={() => setToolsOpen((v) => !v)}
           >
@@ -278,9 +259,10 @@ export default function AutoPanel() {
             </div>
           </CollapsibleSection>
 
-          {/* ── Audit log section (collapsible) ───────────────────────── */}
+          {/* ── Audit History Section ──────────────────────────────────── */}
           <CollapsibleSection
-            title="RECENT OPERATIONS"
+            title="SECURITY AUDIT & OPERATIONS"
+            icon={<ShieldCheck size={11} className="text-[#00FFAE]" />}
             isOpen={auditOpen}
             onToggle={() => setAuditOpen((v) => !v)}
           >
@@ -292,108 +274,17 @@ export default function AutoPanel() {
   );
 }
 
-// ─── StepRow ──────────────────────────────────────────────────────────────────
-
-function StepRow({ step, index }: { step: PlanStep; index: number }) {
-  const color = STEP_COLOR[step.status] ?? STEP_COLOR.pending;
-  const isRunning = step.status === 'running';
-
-  return (
-    <div
-      className="flex items-start gap-2 px-2.5 py-2 rounded-lg"
-      style={{
-        background: 'rgba(10,16,32,0.35)',
-        border: `1px solid ${color}15`,
-      }}
-    >
-      {/* Step number / status dot */}
-      <div
-        className="shrink-0 flex items-center justify-center w-5 h-5 rounded-full mt-px"
-        style={{
-          border: `1px solid ${color}40`,
-          background: step.status === 'completed' ? `${color}15` : 'transparent',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '8px',
-            color,
-            fontWeight: 600,
-            animation: isRunning ? 'rezel-orb-pulse 1.2s ease-in-out infinite' : 'none',
-          }}
-        >
-          {step.status === 'completed' ? '✓' : step.status === 'failed' ? '✗' : index + 1}
-        </span>
-      </div>
-
-      {/* Step info */}
-      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-        <span
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '11px',
-            color: '#EAFBFF',
-            opacity: step.status === 'skipped' ? 0.4 : 0.8,
-            lineHeight: 1.4,
-          }}
-        >
-          {step.description}
-        </span>
-        {step.result && (
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '9px',
-              color: '#00FFAE',
-              opacity: 0.5,
-            }}
-            className="truncate"
-          >
-            {step.result}
-          </span>
-        )}
-        {step.error && (
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '9px',
-              color: '#FF3D71',
-              opacity: 0.6,
-            }}
-          >
-            {step.error}
-          </span>
-        )}
-      </div>
-
-      {/* Status label */}
-      <span
-        className="shrink-0"
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '7px',
-          letterSpacing: '0.08em',
-          color,
-          opacity: 0.6,
-          textTransform: 'uppercase',
-        }}
-      >
-        {step.status}
-      </span>
-    </div>
-  );
-}
-
 // ─── CollapsibleSection ───────────────────────────────────────────────────────
 
 function CollapsibleSection({
   title,
+  icon,
   isOpen,
   onToggle,
   children,
 }: {
   title: string;
+  icon?: React.ReactNode;
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
@@ -401,27 +292,30 @@ function CollapsibleSection({
   const Icon = isOpen ? ChevronUp : ChevronDown;
 
   return (
-    <div>
+    <div className="border border-white/5 rounded-xl bg-[#060B1E]/50 p-2.5">
       <button
+        type="button"
         onClick={onToggle}
-        className="flex items-center justify-between w-full py-1.5 cursor-pointer outline-none"
-        style={{ background: 'transparent', border: 'none' }}
+        className="flex items-center justify-between w-full cursor-pointer outline-none bg-transparent border-none"
       >
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '8px',
-            letterSpacing: '0.16em',
-            color: '#00E5FF',
-            opacity: 0.5,
-          }}
-          className="uppercase"
-        >
-          {title}
-        </span>
-        <Icon size={12} color="#4BB8F0" strokeWidth={1.5} style={{ opacity: 0.4 }} />
+        <div className="flex items-center gap-2">
+          {icon}
+          <span
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '9px',
+              letterSpacing: '0.14em',
+              color: '#7ECFFF',
+              fontWeight: 600,
+            }}
+            className="uppercase"
+          >
+            {title}
+          </span>
+        </div>
+        <Icon size={12} color="#4BB8F0" strokeWidth={1.5} style={{ opacity: 0.6 }} />
       </button>
-      {isOpen && <div className="mt-1">{children}</div>}
+      {isOpen && <div className="mt-2.5">{children}</div>}
     </div>
   );
 }

@@ -38,13 +38,13 @@ const RISK_RULES: readonly RiskRule[] = [
   // HIGH — direct shell execution always requires confirmation
   { pattern: /run_system_command/i,                                 risk: 'HIGH',     alwaysConfirm: true  },
   // HIGH — writes to system-owned paths
-  { pattern: /write_file:.*(?:system32|windows|program files)/i,   risk: 'HIGH',     alwaysConfirm: true  },
+  { pattern: /(?:write_file|write_app_file).*(?:system32|windows|program files)/i, risk: 'HIGH', alwaysConfirm: true },
   // HIGH — process management
-  { pattern: /:kill_process|:create_process/i,                      risk: 'HIGH',     alwaysConfirm: true  },
+  { pattern: /kill_process|create_process/i,                      risk: 'HIGH',     alwaysConfirm: true  },
   // MEDIUM — user-scope writes
-  { pattern: /write_file:|create_folder:|delete_file:/i,            risk: 'MEDIUM',   alwaysConfirm: false },
+  { pattern: /write_file|write_app_file|create_folder|delete_file/i, risk: 'MEDIUM', alwaysConfirm: false },
   // LOW — read-only informational queries
-  { pattern: /get_system_info|read_file:|get_api_key/i,             risk: 'LOW',      alwaysConfirm: false },
+  { pattern: /get_system_info|read_file|read_app_file|get_api_key/i, risk: 'LOW',   alwaysConfirm: false },
 ];
 
 const DEFAULT_RISK: RiskLevel = 'MEDIUM';
